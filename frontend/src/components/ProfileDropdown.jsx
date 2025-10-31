@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   User,
   Settings,
@@ -15,69 +15,129 @@ import {
   Activity,
   TrendingUp,
   Calendar,
-  ChevronRight
-} from 'lucide-react';
+  ChevronRight,
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ProfileDropdown = ({ onClose }) => {
+  const { user: authUser, logout } = useAuth();
+  const navigate = useNavigate();
+
   const user = {
-    name: 'Dr. Jennifer Martinez',
-    role: 'Radiologist - Cardiac Imaging',
-    department: 'Radiology',
-    email: 'j.martinez@hospital.com',
-    status: 'active',
-    avatar: 'JM',
+    name: authUser?.name || "Dr. Jennifer Martinez",
+    role:
+      authUser?.specialization ||
+      authUser?.role ||
+      "Radiologist - Cardiac Imaging",
+    department: authUser?.department || "Radiology",
+    email: authUser?.email || "j.martinez@hospital.com",
+    status: "active",
+    avatar:
+      authUser?.avatar ||
+      authUser?.name?.substring(0, 2)?.toUpperCase() ||
+      "JM",
   };
 
   const statusColors = {
-    active: 'bg-health-500',
-    away: 'bg-warning-500',
-    busy: 'bg-alert-500',
-    offline: 'bg-gray-400',
+    active: "bg-health-500",
+    away: "bg-warning-500",
+    busy: "bg-alert-500",
+    offline: "bg-gray-400",
   };
 
   const quickActions = [
-    { icon: Activity, label: 'My Dashboard', path: '/dashboard' },
-    { icon: User, label: 'View My Profile', path: '/profile' },
-    { icon: TrendingUp, label: 'My Performance Metrics', path: '/analytics?user=me' },
-    { icon: Calendar, label: 'My Schedule', path: '/schedule' },
+    { icon: Activity, label: "My Dashboard", path: "/dashboard" },
+    { icon: User, label: "View My Profile", path: "/profile" },
+    {
+      icon: TrendingUp,
+      label: "My Performance Metrics",
+      path: "/analytics?user=me",
+    },
+    { icon: Calendar, label: "My Schedule", path: "/schedule" },
   ];
 
   const settingsMenu = [
     {
-      section: 'Account',
+      section: "Account",
       items: [
-        { icon: Settings, label: 'Settings', path: '/settings', badge: null },
-        { icon: Bell, label: 'Notification Preferences', path: '/settings?tab=notifications', badge: null },
-        { icon: Palette, label: 'Appearance & Accessibility', path: '/settings?tab=display', badge: null },
-        { icon: Shield, label: 'Security & Privacy', path: '/settings?tab=security', badge: null },
+        { icon: Settings, label: "Settings", path: "/settings", badge: null },
+        {
+          icon: Bell,
+          label: "Notification Preferences",
+          path: "/settings?tab=notifications",
+          badge: null,
+        },
+        {
+          icon: Palette,
+          label: "Appearance & Accessibility",
+          path: "/settings?tab=display",
+          badge: null,
+        },
+        {
+          icon: Shield,
+          label: "Security & Privacy",
+          path: "/settings?tab=security",
+          badge: null,
+        },
       ],
     },
     {
-      section: 'Organization',
+      section: "Organization",
       items: [
-        { icon: Building, label: 'Institution & Department Info', path: '/settings?tab=organization', badge: null },
-        { icon: Smartphone, label: 'Connected Devices & Apps', path: '/settings?tab=devices', badge: '3' },
-        { icon: CreditCard, label: 'Billing & Subscription', path: '/settings?tab=billing', badge: null },
+        {
+          icon: Building,
+          label: "Institution & Department Info",
+          path: "/settings?tab=organization",
+          badge: null,
+        },
+        {
+          icon: Smartphone,
+          label: "Connected Devices & Apps",
+          path: "/settings?tab=devices",
+          badge: "3",
+        },
+        {
+          icon: CreditCard,
+          label: "Billing & Subscription",
+          path: "/settings?tab=billing",
+          badge: null,
+        },
       ],
     },
     {
-      section: 'Support',
+      section: "Support",
       items: [
-        { icon: HelpCircle, label: 'Help & Support', path: '/help', badge: null },
-        { icon: BookOpen, label: 'Documentation & Training', path: '/docs', badge: 'New' },
+        {
+          icon: HelpCircle,
+          label: "Help & Support",
+          path: "/help",
+          badge: null,
+        },
+        {
+          icon: BookOpen,
+          label: "Documentation & Training",
+          path: "/docs",
+          badge: "New",
+        },
       ],
     },
   ];
 
   const handleStatusChange = (newStatus) => {
-    console.log('Changing status to:', newStatus);
+    console.log("Changing status to:", newStatus);
     // Implement status change logic
   };
 
-  const handleLogout = () => {
-    console.log('Logging out...');
-    onClose();
-    // Implement logout logic
+  const handleLogout = async () => {
+    try {
+      onClose();
+      const result = await logout();
+      if (result?.redirect) {
+        navigate(result.redirect);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (
@@ -96,7 +156,11 @@ const ProfileDropdown = ({ onClose }) => {
             <div className="w-16 h-16 bg-white bg-opacity-20 backdrop-blur rounded-full flex items-center justify-center text-white text-xl font-bold border-2 border-white">
               {user.avatar}
             </div>
-            <span className={`absolute bottom-0 right-0 w-4 h-4 ${statusColors[user.status]} border-2 border-white rounded-full`} />
+            <span
+              className={`absolute bottom-0 right-0 w-4 h-4 ${
+                statusColors[user.status]
+              } border-2 border-white rounded-full`}
+            />
           </div>
 
           {/* User Info */}
@@ -115,7 +179,11 @@ const ProfileDropdown = ({ onClose }) => {
             <div className="mt-3">
               <div className="relative">
                 <button className="flex items-center space-x-2 px-3 py-1.5 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg text-white text-xs font-medium transition-colors">
-                  <span className={`w-2 h-2 rounded-full ${statusColors[user.status]}`} />
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      statusColors[user.status]
+                    }`}
+                  />
                   <span className="capitalize">{user.status}</span>
                   <ChevronRight className="w-3 h-3 rotate-90" />
                 </button>
@@ -148,7 +216,10 @@ const ProfileDropdown = ({ onClose }) => {
       {/* Settings Menu */}
       <div className="max-h-96 overflow-y-auto custom-scrollbar">
         {settingsMenu.map((section, index) => (
-          <div key={section.section} className={index > 0 ? 'border-t border-gray-200' : ''}>
+          <div
+            key={section.section}
+            className={index > 0 ? "border-t border-gray-200" : ""}
+          >
             <div className="px-4 py-2 bg-gray-50">
               <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 {section.section}
@@ -169,13 +240,16 @@ const ProfileDropdown = ({ onClose }) => {
                       <span className="text-sm font-medium">{item.label}</span>
                     </div>
                     {item.badge && (
-                      <span className={`
+                      <span
+                        className={`
                         px-2 py-0.5 rounded-full text-xs font-medium
-                        ${item.badge === 'New'
-                          ? 'bg-health-100 text-health-700'
-                          : 'bg-gray-100 text-gray-700'
+                        ${
+                          item.badge === "New"
+                            ? "bg-health-100 text-health-700"
+                            : "bg-gray-100 text-gray-700"
                         }
-                      `}>
+                      `}
+                      >
                         {item.badge}
                       </span>
                     )}
