@@ -1,0 +1,72 @@
+{
+  "report_id": "DRUG_SAFETY_20251011_221705",
+  "patient_info": {
+    "patient_id": "DEMO_001",
+    "age": 68,
+    "gender": "Male",
+    "conditions": [
+      "Atrial fibrillation",
+      "Hypertension",
+      "Type 2 diabetes mellitus",
+      "Hyperlipidemia"
+    ]
+  },
+  "medication_analysis": {
+    "analysis_id": "DRUG_20251011_221603",
+    "patient_id": "DEMO_001",
+    "analysis_timestamp": "2025-10-11T22:16:03.682780",
+    "total_medications": 5,
+    "interactions_found": [
+      {
+        "drug1": "Warfarin",
+        "drug2": "Aspirin",
+        "severity": "Major",
+        "mechanism": "Increased bleeding risk",
+        "recommendation": "Monitor INR closely",
+        "risk_score": 3
+      }
+    ],
+    "contraindications": [],
+    "monitoring_requirements": [
+      "INR",
+      "PT/PTT",
+      "Signs of bleeding",
+      "Renal function",
+      "Hearing (high doses)",
+      "B12 levels",
+      "Lactic acid",
+      "Blood pressure",
+      "Potassium levels",
+      "Liver enzymes",
+      "CK levels",
+      "Muscle symptoms"
+    ],
+    "risk_assessment": {
+      "overall_risk_level": "Moderate",
+      "risk_color": "#D97706",
+      "risk_score": 0.03,
+      "critical_interactions": 0,
+      "major_interactions": 1,
+      "total_interactions": 1,
+      "contraindications_count": 0
+    },
+    "recommendations": [
+      "\ud83d\udeab Warfarin + Aspirin: Monitor INR closely",
+      "\ud83d\udcca Required monitoring: INR, PT/PTT, Signs of bleeding..."
+    ]
+  },
+  "safety_summary": {
+    "overall_assessment": "Moderate",
+    "immediate_action_required": false,
+    "key_concerns": [
+      "Warfarin + Aspirin"
+    ],
+    "monitoring_priority": "High"
+  },
+  "clinical_actions": {
+    "immediate_review": false,
+    "pharmacist_consultation": true,
+    "enhanced_monitoring": true,
+    "medication_adjustment": false
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "session_id": "IMG_SESSION_20251011_214526",
+  "analysis_summary": {
+    "total_images_processed": 3,
+    "successful_analyses": 3,
+    "overall_risk_assessment": "Low",
+    "key_findings": [
+      "Cardiomegaly",
+      "Age-appropriate changes",
+      "No significant pathology"
+    ]
+  },
+  "clinical_insights": {
+    "immediate_attention_required": false,
+    "follow_up_recommended": false,
+    "consultation_suggested": "Radiology and relevant clinical specialists"
+  },
+  "technical_metrics": {
+    "average_confidence": 0.6261470464583171,
+    "processing_time": "2.5 seconds per image",
+    "model_version": "MONAI-Enhanced v2.1"
+  }
+}

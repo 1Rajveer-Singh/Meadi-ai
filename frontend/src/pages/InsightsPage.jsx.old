@@ -1,0 +1,798 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, RadarChart, PolarGrid,
+  PolarAngleAxis, PolarRadiusAxis, Radar
+} from 'recharts';
+import {
+  BarChart3, TrendingUp, Download, Filter, Calendar, Users, Activity,
+  AlertCircle, CheckCircle, Clock, Brain, Stethoscope, Target,
+  Award, Zap, Eye, PieChart as PieChartIcon, LineChart as LineChartIcon,
+  Search, RefreshCw, Settings, Share, Sparkles, Monitor, Shield,
+  Database, Microscope, FileText, BookOpen, ExternalLink,
+  Lightbulb, ArrowUp, ArrowDown, Plus, Star, Bookmark,
+  Globe, Building, Users as UsersIcon, Heart, Pill,
+  FlaskConical, Clipboard, MessageSquare, Bell
+} from 'lucide-react';
+import NavigationBar from '../components/NavigationBar';
+
+const InsightsPage = () => {
+  const [activeTab, setActiveTab] = useState('analytics');
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedTimeRange, setSelectedTimeRange] = useState('30days');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const tabs = [
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      icon: BarChart3,
+      description: 'Performance metrics & trends',
+      color: 'blue'
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
+      icon: FileText,
+      description: 'Diagnostic reports & explainability',
+      color: 'green'
+    },
+    {
+      id: 'ai-insights',
+      label: 'AI Insights',
+      icon: Brain,
+      description: 'Predictive analytics & recommendations',
+      color: 'purple'
+    },
+    {
+      id: 'research',
+      label: 'Research',
+      icon: Database,
+      description: 'Clinical trials & evidence database',
+      color: 'orange'
+    }
+  ];
+
+  // Mock analytics data
+  const analyticsData = {
+    overview: {
+      totalDiagnoses: 2847,
+      accuracyRate: 96.2,
+      avgProcessingTime: 2.4,
+      criticalCases: 23,
+      improvement: {
+        diagnoses: 12.5,
+        accuracy: 2.1,
+        speed: -8.3,
+        critical: -15.2
+      }
+    },
+    chartData: {
+      monthly: [
+        { month: 'Jan', diagnoses: 245, accuracy: 94.2, avgTime: 2.8 },
+        { month: 'Feb', diagnoses: 267, accuracy: 95.1, avgTime: 2.6 },
+        { month: 'Mar', diagnoses: 298, accuracy: 96.2, avgTime: 2.4 },
+        { month: 'Apr', diagnoses: 334, accuracy: 96.8, avgTime: 2.2 },
+        { month: 'May', diagnoses: 387, accuracy: 97.1, avgTime: 2.0 },
+        { month: 'Jun', diagnoses: 421, accuracy: 97.3, avgTime: 1.9 }
+      ],
+      categories: [
+        { name: 'Cardiology', value: 35, count: 987, accuracy: 97.2 },
+        { name: 'Pulmonology', value: 28, count: 789, accuracy: 95.8 },
+        { name: 'Neurology', value: 20, count: 564, accuracy: 96.5 },
+        { name: 'Radiology', value: 17, count: 478, accuracy: 98.1 }
+      ]
+    }
+  };
+
+  // Mock AI insights data
+  const aiInsights = [
+    {
+      id: 1,
+      title: 'Predicted Surge in Respiratory Cases',
+      description: 'AI models predict a 23% increase in respiratory cases over the next 2 weeks based on seasonal patterns.',
+      confidence: 87,
+      impact: 'high',
+      category: 'capacity_planning',
+      timeframe: '2 weeks',
+      recommendation: 'Consider increasing respiratory specialist availability and ventilator readiness.',
+      trend: 'up'
+    },
+    {
+      id: 2,
+      title: 'Diagnostic Accuracy Improvement Opportunity',
+      description: 'Cross-validation protocols for chest X-rays could improve accuracy by 4.2%.',
+      confidence: 92,
+      impact: 'medium',
+      category: 'quality_improvement',
+      timeframe: '1 month',
+      recommendation: 'Implement peer review system for complex radiological cases.',
+      trend: 'up'
+    },
+    {
+      id: 3,
+      title: 'Resource Optimization Alert',
+      description: 'AI scheduling optimization could reduce patient wait times by 18%.',
+      confidence: 78,
+      impact: 'medium',
+      category: 'efficiency',
+      timeframe: '2 weeks',
+      recommendation: 'Deploy automated scheduling system for routine appointments.',
+      trend: 'neutral'
+    }
+  ];
+
+  // Mock research data
+  const researchData = {
+    trials: [
+      {
+        id: 1,
+        title: 'AI-Assisted Cardiac Diagnosis in Emergency Settings',
+        phase: 'Phase III',
+        status: 'recruiting',
+        participants: '2,400 / 3,000',
+        institution: 'Mayo Clinic',
+        duration: '24 months',
+        primaryEndpoint: 'Diagnostic accuracy compared to standard care',
+        tags: ['Cardiology', 'AI', 'Emergency Medicine']
+      },
+      {
+        id: 2,
+        title: 'Machine Learning for Early Sepsis Detection',
+        phase: 'Phase II',
+        status: 'active',
+        participants: '1,850 / 2,000',
+        institution: 'Johns Hopkins',
+        duration: '18 months',
+        primaryEndpoint: 'Time to sepsis identification',
+        tags: ['Critical Care', 'Machine Learning', 'Sepsis']
+      },
+      {
+        id: 3,
+        title: 'Deep Learning in Radiological Screening',
+        phase: 'Completed',
+        status: 'published',
+        participants: '5,000 / 5,000',
+        institution: 'Stanford Medicine',
+        duration: '36 months',
+        primaryEndpoint: 'Screening sensitivity and specificity',
+        tags: ['Radiology', 'Deep Learning', 'Screening']
+      }
+    ],
+    publications: [
+      {
+        id: 1,
+        title: 'Artificial Intelligence in Emergency Medicine: A Systematic Review',
+        journal: 'New England Journal of Medicine',
+        authors: 'Smith, J. et al.',
+        date: '2024-09-15',
+        citations: 127,
+        impact: 'High',
+        relevance: 95,
+        abstract: 'Comprehensive review of AI applications in emergency medical settings...'
+      },
+      {
+        id: 2,
+        title: 'Predictive Analytics for Hospital Resource Management',
+        journal: 'Nature Medicine',
+        authors: 'Johnson, A. et al.',
+        date: '2024-08-22',
+        citations: 89,
+        impact: 'High',
+        relevance: 91,
+        abstract: 'Novel approach to predicting hospital resource needs using machine learning...'
+      }
+    ]
+  };
+
+  // Simulate loading
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, []);
+
+  const refreshData = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1500);
+  };
+
+  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+
+  const renderAnalytics = () => (
+    <div className="space-y-6">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          {
+            label: 'Total Diagnoses',
+            value: analyticsData.overview.totalDiagnoses.toLocaleString(),
+            change: analyticsData.overview.improvement.diagnoses,
+            icon: Activity,
+            color: 'blue'
+          },
+          {
+            label: 'Accuracy Rate',
+            value: `${analyticsData.overview.accuracyRate}%`,
+            change: analyticsData.overview.improvement.accuracy,
+            icon: Target,
+            color: 'green'
+          },
+          {
+            label: 'Avg Processing Time',
+            value: `${analyticsData.overview.avgProcessingTime}s`,
+            change: analyticsData.overview.improvement.speed,
+            icon: Clock,
+            color: 'purple'
+          },
+          {
+            label: 'Critical Cases',
+            value: analyticsData.overview.criticalCases,
+            change: analyticsData.overview.improvement.critical,
+            icon: AlertCircle,
+            color: 'red'
+          }
+        ].map((metric, index) => {
+          const Icon = metric.icon;
+          const isPositive = metric.change > 0;
+          const isSpeed = metric.label.includes('Time');
+          const trendPositive = isSpeed ? metric.change < 0 : metric.change > 0;
+          
+          return (
+            <div key={index} className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="flex items-center justify-between">
+                <div className={`w-12 h-12 bg-${metric.color}-100 rounded-lg flex items-center justify-center`}>
+                  <Icon className={`w-6 h-6 text-${metric.color}-600`} />
+                </div>
+                <div className={`flex items-center text-sm ${
+                  trendPositive ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {trendPositive ? (
+                    <ArrowUp className="w-4 h-4 mr-1" />
+                  ) : (
+                    <ArrowDown className="w-4 h-4 mr-1" />
+                  )}
+                  {Math.abs(metric.change)}%
+                </div>
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl font-bold text-gray-900">{metric.value}</h3>
+                <p className="text-gray-600 text-sm">{metric.label}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Performance Trend */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Performance Trends</h3>
+            <select 
+              value={selectedTimeRange}
+              onChange={(e) => setSelectedTimeRange(e.target.value)}
+              className="text-sm border border-gray-300 rounded-lg px-3 py-1"
+            >
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="90days">Last 90 Days</option>
+            </select>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={analyticsData.chartData.monthly}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis yAxisId="left" orientation="left" />
+              <YAxis yAxisId="right" orientation="right" />
+              <Tooltip />
+              <Legend />
+              <Line yAxisId="left" type="monotone" dataKey="diagnoses" stroke="#3B82F6" strokeWidth={2} name="Diagnoses" />
+              <Line yAxisId="right" type="monotone" dataKey="accuracy" stroke="#10B981" strokeWidth={2} name="Accuracy %" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Category Distribution */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Diagnosis Categories</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={analyticsData.chartData.categories}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label={({ name, value }) => `${name}: ${value}%`}
+              >
+                {analyticsData.chartData.categories.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Detailed Analytics Table */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Department Performance</h3>
+          <button className="text-blue-600 hover:text-blue-700 text-sm">View All →</button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Department</th>
+                <th className="text-right py-3 px-4 font-medium text-gray-700">Cases</th>
+                <th className="text-right py-3 px-4 font-medium text-gray-700">Accuracy</th>
+                <th className="text-right py-3 px-4 font-medium text-gray-700">Avg Time</th>
+                <th className="text-right py-3 px-4 font-medium text-gray-700">Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              {analyticsData.chartData.categories.map((category, index) => (
+                <tr key={index} className="border-b border-gray-100">
+                  <td className="py-3 px-4">{category.name}</td>
+                  <td className="py-3 px-4 text-right">{category.count}</td>
+                  <td className="py-3 px-4 text-right">{category.accuracy}%</td>
+                  <td className="py-3 px-4 text-right">2.{Math.floor(Math.random() * 9)}s</td>
+                  <td className="py-3 px-4 text-right">
+                    <span className="text-green-600">↗ +5.2%</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderReports = () => (
+    <div className="space-y-6">
+      {/* Report Filters */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold text-gray-900">Diagnostic Reports</h2>
+          <div className="flex items-center space-x-4">
+            <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+              <option>All Departments</option>
+              <option>Cardiology</option>
+              <option>Radiology</option>
+              <option>Emergency</option>
+            </select>
+            <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+              <option>Last 30 Days</option>
+              <option>Last 7 Days</option>
+              <option>Last 90 Days</option>
+            </select>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <Download className="w-4 h-4 inline mr-2" />
+              Export
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Reports */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Recent Diagnostic Reports</h3>
+        </div>
+        <div className="divide-y divide-gray-200">
+          {[
+            {
+              id: 'RPT-2024-1089',
+              patient: 'Sarah M. Johnson',
+              diagnosis: 'Pneumonia - Community Acquired',
+              department: 'Emergency Medicine',
+              physician: 'Dr. Robert Chen',
+              date: '2024-10-11',
+              confidence: 94.2,
+              status: 'completed'
+            },
+            {
+              id: 'RPT-2024-1088',
+              patient: 'Michael K. Davis',
+              diagnosis: 'Atrial Fibrillation',
+              department: 'Cardiology',
+              physician: 'Dr. Lisa Wong',
+              date: '2024-10-11',
+              confidence: 97.8,
+              status: 'reviewed'
+            },
+            {
+              id: 'RPT-2024-1087',
+              patient: 'Jennifer L. Smith',
+              diagnosis: 'Migraine with Aura',
+              department: 'Neurology',
+              physician: 'Dr. James Miller',
+              date: '2024-10-10',
+              confidence: 89.6,
+              status: 'pending'
+            }
+          ].map((report) => (
+            <div key={report.id} className="p-6 hover:bg-gray-50">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-4 mb-2">
+                    <span className="font-medium text-gray-900">{report.id}</span>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      report.status === 'completed' ? 'bg-green-100 text-green-700' :
+                      report.status === 'reviewed' ? 'bg-blue-100 text-blue-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {report.status}
+                    </span>
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-1">{report.patient}</h4>
+                  <p className="text-gray-600 mb-2">{report.diagnosis}</p>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span>{report.department}</span>
+                    <span>•</span>
+                    <span>{report.physician}</span>
+                    <span>•</span>
+                    <span>{report.date}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-green-600 mb-1">{report.confidence}%</div>
+                  <p className="text-sm text-gray-500">Confidence</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* AI Explainability Section */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Decision Explainability</h3>
+        <div className="space-y-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h4 className="font-medium text-gray-900 mb-2">Decision Factors for Case RPT-2024-1089</h4>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Chest X-ray opacity patterns</span>
+                <div className="flex items-center">
+                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '87%' }} />
+                  </div>
+                  <span className="text-sm font-medium">87%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Clinical symptoms correlation</span>
+                <div className="flex items-center">
+                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                    <div className="bg-green-600 h-2 rounded-full" style={{ width: '92%' }} />
+                  </div>
+                  <span className="text-sm font-medium">92%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Laboratory values</span>
+                <div className="flex items-center">
+                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                    <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '73%' }} />
+                  </div>
+                  <span className="text-sm font-medium">73%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAIInsights = () => (
+    <div className="space-y-6">
+      {/* AI Insights Header */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">AI-Generated Insights</h2>
+            <p className="text-gray-600">Predictive analytics and intelligent recommendations</p>
+          </div>
+          <button 
+            onClick={refreshData}
+            disabled={refreshing}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+          >
+            {refreshing ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <>
+                <Brain className="w-4 h-4 inline mr-2" />
+                Refresh Insights
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Insight Cards */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {aiInsights.map((insight) => (
+          <div key={insight.id} className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="flex items-start justify-between mb-3">
+              <span className={`px-2 py-1 text-xs rounded-full ${
+                insight.impact === 'high' ? 'bg-red-100 text-red-700' :
+                insight.impact === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                'bg-green-100 text-green-700'
+              }`}>
+                {insight.impact} impact
+              </span>
+              <div className="flex items-center text-sm text-gray-500">
+                {insight.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                {insight.trend === 'down' && <ArrowDown className="w-4 h-4 text-red-500" />}
+              </div>
+            </div>
+            
+            <h3 className="font-semibold text-gray-900 mb-2">{insight.title}</h3>
+            <p className="text-gray-600 text-sm mb-4">{insight.description}</p>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Confidence:</span>
+                <span className="font-medium text-purple-600">{insight.confidence}%</span>
+              </div>
+              
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Timeframe:</span>
+                <span className="font-medium">{insight.timeframe}</span>
+              </div>
+            </div>
+            
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm font-medium text-gray-700 mb-1">Recommendation:</p>
+              <p className="text-sm text-gray-600">{insight.recommendation}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* AI Performance Metrics */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Model Performance</h3>
+        <div className="grid md:grid-cols-4 gap-6">
+          {[
+            { label: 'Model Accuracy', value: '97.3%', change: '+2.1%', positive: true },
+            { label: 'Prediction Confidence', value: '89.7%', change: '+1.8%', positive: true },
+            { label: 'Processing Speed', value: '1.2s', change: '-0.3s', positive: true },
+            { label: 'False Positives', value: '2.7%', change: '-0.9%', positive: true }
+          ].map((metric, index) => (
+            <div key={index} className="text-center">
+              <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
+              <p className="text-gray-600 text-sm mb-1">{metric.label}</p>
+              <span className={`text-sm ${metric.positive ? 'text-green-600' : 'text-red-600'}`}>
+                {metric.change}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderResearch = () => (
+    <div className="space-y-6">
+      {/* Research Header */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Research Database</h2>
+            <p className="text-gray-600">Clinical trials, publications, and evidence-based medicine</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search research..."
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+            </div>
+            <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+              Advanced Search
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid md:grid-cols-4 gap-6">
+        {[
+          { label: 'Active Trials', value: '1,247', icon: FlaskConical },
+          { label: 'Publications', value: '15,623', icon: BookOpen },
+          { label: 'Evidence Reviews', value: '3,891', icon: CheckCircle },
+          { label: 'Guidelines Updated', value: '127', icon: Clipboard }
+        ].map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div key={index} className="bg-white rounded-lg shadow-sm border p-6 text-center">
+              <Icon className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-gray-600 text-sm">{stat.label}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Clinical Trials */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Active Clinical Trials</h3>
+        </div>
+        <div className="divide-y divide-gray-200">
+          {researchData.trials.map((trial) => (
+            <div key={trial.id} className="p-6">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">{trial.title}</h4>
+                  <p className="text-gray-600 mb-2">{trial.primaryEndpoint}</p>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span>{trial.institution}</span>
+                    <span>•</span>
+                    <span>{trial.duration}</span>
+                    <span>•</span>
+                    <span>{trial.participants} participants</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className={`px-3 py-1 text-xs rounded-full ${
+                    trial.status === 'recruiting' ? 'bg-blue-100 text-blue-700' :
+                    trial.status === 'active' ? 'bg-green-100 text-green-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {trial.status}
+                  </span>
+                  <p className="text-sm text-gray-500 mt-2">{trial.phase}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {trial.tags.map((tag, index) => (
+                  <span key={index} className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Publications */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Recent Publications</h3>
+        </div>
+        <div className="divide-y divide-gray-200">
+          {researchData.publications.map((pub) => (
+            <div key={pub.id} className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">{pub.title}</h4>
+                  <p className="text-gray-600 mb-2">{pub.abstract}</p>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
+                    <span>{pub.authors}</span>
+                    <span>•</span>
+                    <span>{pub.journal}</span>
+                    <span>•</span>
+                    <span>{pub.date}</span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-blue-600">{pub.citations} citations</span>
+                    <span className="text-sm text-green-600">Relevance: {pub.relevance}%</span>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <button className="p-2 text-gray-400 hover:text-blue-600">
+                    <ExternalLink className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <NavigationBar />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading insights...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <NavigationBar />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Insights & Analytics Hub</h1>
+            <p className="text-gray-600">Comprehensive analytics, reports, AI insights, and research database</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={refreshData}
+              disabled={refreshing}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 inline mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <Download className="w-4 h-4 inline mr-2" />
+              Export All
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 mb-8">
+          <nav className="-mb-px flex space-x-8 overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`
+                    group flex items-center py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap
+                    ${isActive
+                      ? `border-${tab.color}-500 text-${tab.color}-600`
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }
+                  `}
+                >
+                  <Icon className={`w-5 h-5 mr-2 ${
+                    isActive ? `text-${tab.color}-500` : 'text-gray-400 group-hover:text-gray-500'
+                  }`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeTab === 'analytics' && renderAnalytics()}
+            {activeTab === 'reports' && renderReports()}
+            {activeTab === 'ai-insights' && renderAIInsights()}
+            {activeTab === 'research' && renderResearch()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+export default InsightsPage;

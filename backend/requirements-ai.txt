@@ -1,0 +1,87 @@
+# 📦 Advanced AI Requirements for Medical AI Backend
+
+# Core AI/ML Frameworks
+torch>=2.1.0
+torchvision>=0.16.0
+torchaudio>=2.1.0
+
+# MONAI Framework for Medical Imaging
+monai[all]>=1.3.0
+nibabel>=5.1.0
+simpleitk>=2.3.1
+pydicom>=2.4.3
+
+# Computer Vision & Image Processing
+opencv-python-headless>=4.8.0
+scikit-image>=0.21.0
+Pillow>=10.0.0
+imageio>=2.31.0
+
+# Natural Language Processing
+transformers>=4.35.0
+tokenizers>=0.14.0
+sentence-transformers>=2.2.2
+spacy>=3.7.0
+nltk>=3.8.1
+
+# Machine Learning & Data Science
+scikit-learn>=1.3.0
+xgboost>=1.7.6
+lightgbm>=4.1.0
+pandas>=2.1.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# Deep Learning Utilities
+accelerate>=0.24.0
+datasets>=2.14.0
+evaluate>=0.4.0
+tensorboard>=2.15.0
+wandb>=0.16.0
+
+# Medical Data Processing
+biopython>=1.83
+rdkit>=2023.9.1
+chempy>=0.8.0
+pubchempy>=1.0.4
+bio>=1.6.0
+
+# Hugging Face Hub & Models
+huggingface-hub>=0.17.0
+safetensors>=0.4.0
+
+# Async & Performance
+asyncio-mqtt>=0.13.0
+aiofiles>=23.2.1
+celery>=5.3.0
+redis>=5.0.0
+
+# Database Integrations
+pymongo>=4.5.0
+motor>=3.3.0
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.7
+
+# API & Web Framework Extensions
+websockets>=12.0
+sse-starlette>=1.6.5
+python-multipart>=0.0.6
+
+# Logging & Monitoring
+structlog>=23.2.0
+prometheus-client>=0.19.0
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+
+# Security & Authentication
+cryptography>=41.0.0
+passlib[bcrypt]>=1.7.4
+python-jose[cryptography]>=3.3.0
+
+# Development & Testing (Optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+black>=23.9.0
+flake8>=6.1.0
+mypy>=1.6.0

@@ -1,0 +1,38 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gcc \
+    g++ \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy application code
+COPY . .
+
+# Install core dependencies first (without strict versioning)
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install packages individually to avoid conflicts
+RUN pip install --no-cache-dir fastapi uvicorn[standard] pydantic pydantic-settings
+RUN pip install --no-cache-dir motor redis pymongo minio
+RUN pip install --no-cache-dir httpx aiohttp requests
+RUN pip install --no-cache-dir python-multipart python-jose[cryptography] passlib[bcrypt] python-dotenv
+RUN pip install --no-cache-dir pillow numpy pandas scikit-learn
+RUN pip install --no-cache-dir nibabel pydicom opencv-python-headless
+
+# Create models directory
+RUN mkdir -p /models
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

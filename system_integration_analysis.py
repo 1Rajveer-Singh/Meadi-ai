@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""
+🔗 Multi-Agent Medical AI Integration & Visualization System
+Comprehensive mapping and connection system for all notebook and agent files
+"""
+
+import sys
+import os
+import json
+import asyncio
+from datetime import datetime
+from pathlib import Path
+
+# Add paths for all system components
+sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'backend', 'agents'))
+
+class MedicalAIIntegrationSystem:
+    """
+    Central integration system that connects all components:
+    - Jupyter notebooks (analysis workflows)
+    - Multi-agent Python files (AI processing)
+    - Shared visualization infrastructure
+    - Data flow coordination
+    """
+    
+    def __init__(self):
+        self.system_map = {
+            "notebooks": {
+                "Comprehensive_Medical_Image_Analysis.ipynb": {
+                    "purpose": "MONAI-powered medical image analysis with deep learning",
+                    "agents_used": ["image_analysis"],
+                    "data_flows": ["medical_images", "diagnostic_results"],
+                    "visualizations": ["heatmaps", "roi_detection", "confidence_charts"],
+                    "dependencies": ["torch", "monai", "opencv", "matplotlib"]
+                },
+                "Ultra_Advanced_Clinical_Decision_Support.ipynb": {
+                    "purpose": "Evidence-based clinical recommendations and diagnosis",
+                    "agents_used": ["clinical_decision_support"],
+                    "data_flows": ["patient_data", "clinical_guidelines", "recommendations"],
+                    "visualizations": ["decision_trees", "risk_charts", "guideline_compliance"],
+                    "dependencies": ["scikit-learn", "pandas", "plotly"]
+                },
+                "Ultra_Advanced_Drug_Safety_Analysis.ipynb": {
+                    "purpose": "Comprehensive drug interaction and safety analysis",
+                    "agents_used": ["drug_interaction"],
+                    "data_flows": ["medication_data", "interaction_warnings", "safety_scores"],
+                    "visualizations": ["interaction_matrix", "safety_heatmap", "dosage_charts"],
+                    "dependencies": ["networkx", "seaborn", "matplotlib"]
+                },
+                "Ultra_Advanced_Precision_Medicine.ipynb": {
+                    "purpose": "Personalized medicine based on genomic and clinical data",
+                    "agents_used": ["precision_medicine"],
+                    "data_flows": ["genomic_data", "biomarkers", "treatment_plans"],
+                    "visualizations": ["genomic_plots", "biomarker_trends", "treatment_response"],
+                    "dependencies": ["bioinformatics", "plotly", "pandas"]
+                },
+                "Ultra_Advanced_Research.ipynb": {
+                    "purpose": "Clinical trial matching and research evidence synthesis",
+                    "agents_used": ["research"],
+                    "data_flows": ["research_data", "trial_matches", "evidence_synthesis"],
+                    "visualizations": ["trial_timeline", "evidence_network", "research_trends"],
+                    "dependencies": ["networkx", "matplotlib", "plotly"]
+                }
+            },
+            "agents": {
+                "multi_agent_system.py": {
+                    "purpose": "Central orchestration of all specialized agents",
+                    "coordinates": ["image_analysis", "drug_interaction", "clinical_decision_support", "research", "history_synthesis"],
+                    "data_flows": ["agent_coordination", "result_aggregation", "workflow_management"],
+                    "apis": ["analyze_patient", "coordinate_agents", "generate_report"]
+                },
+                "image_analysis.py": {
+                    "purpose": "MONAI-powered medical image processing and analysis",
+                    "models": ["DenseNet121", "NIH_ChestXray", "MONAI_transforms"],
+                    "data_flows": ["image_upload", "preprocessing", "inference", "heatmap_generation"],
+                    "apis": ["analyze_image", "generate_heatmap", "classify_pathology"]
+                },
+                "drug_interaction.py": {
+                    "purpose": "Real-time drug interaction detection and safety analysis",
+                    "databases": ["DrugBank", "FDA_Orange_Book", "interaction_matrix"],
+                    "data_flows": ["medication_list", "interaction_check", "safety_assessment"],
+                    "apis": ["check_interactions", "assess_safety", "get_recommendations"]
+                },
+                "clinical_decision_support.py": {
+                    "purpose": "Evidence-based clinical decision support and recommendations",
+                    "guidelines": ["AHA_guidelines", "NICE_protocols", "clinical_pathways"],
+                    "data_flows": ["clinical_data", "guideline_matching", "recommendation_generation"],
+                    "apis": ["generate_recommendations", "assess_risk", "get_guidelines"]
+                },
+                "research.py": {
+                    "purpose": "Clinical trial matching and research evidence synthesis",
+                    "databases": ["ClinicalTrials.gov", "PubMed", "Cochrane_Library"],
+                    "data_flows": ["patient_criteria", "trial_search", "evidence_synthesis"],
+                    "apis": ["find_trials", "match_criteria", "synthesize_evidence"]
+                },
+                "history_synthesis.py": {
+                    "purpose": "Patient history integration and temporal analysis",
+                    "data_sources": ["EHR", "lab_results", "imaging_history"],
+                    "data_flows": ["history_aggregation", "timeline_creation", "trend_analysis"],
+                    "apis": ["synthesize_history", "create_timeline", "identify_patterns"]
+                }
+            },
+            "shared_infrastructure": {
+                "databases": {
+                    "mongodb": "Patient data, medical records, analysis results",
+                    "redis": "Caching, session management, real-time data",
+                    "minio": "Medical image storage, file management"
+                },
+                "apis": {
+                    "multi_agent_analysis": "Central API for coordinated analysis",
+                    "image_upload": "Medical image processing endpoint",
+                    "patient_data": "Patient information management"
+                },
+                "models": {
+                    "base_models": "Shared data models and schemas",
+                    "ai_models": "Trained ML models storage"
+                }
+            }
+        }
+        
+    def get_system_connections(self):
+        """Map all interconnections between files"""
+        connections = {
+            "notebook_to_agent": {
+                "Comprehensive_Medical_Image_Analysis.ipynb": ["image_analysis.py"],
+                "Ultra_Advanced_Clinical_Decision_Support.ipynb": ["clinical_decision_support.py"],
+                "Ultra_Advanced_Drug_Safety_Analysis.ipynb": ["drug_interaction.py"],
+                "Ultra_Advanced_Precision_Medicine.ipynb": ["precision_medicine.py"],
+                "Ultra_Advanced_Research.ipynb": ["research.py"]
+            },
+            "agent_to_agent": {
+                "multi_agent_system.py": ["image_analysis.py", "drug_interaction.py", 
+                                        "clinical_decision_support.py", "research.py", "history_synthesis.py"],
+                "clinical_decision_support.py": ["drug_interaction.py", "history_synthesis.py"],
+                "research.py": ["clinical_decision_support.py"],
+                "history_synthesis.py": ["image_analysis.py", "drug_interaction.py"]
+            },
+            "shared_data_flows": {
+                "patient_data": ["all_notebooks", "all_agents"],
+                "analysis_results": ["multi_agent_system.py", "all_notebooks"],
+                "visualizations": ["all_notebooks", "frontend"],
+                "medical_images": ["image_analysis.py", "Comprehensive_Medical_Image_Analysis.ipynb"],
+                "drug_data": ["drug_interaction.py", "Ultra_Advanced_Drug_Safety_Analysis.ipynb"]
+            }
+        }
+        return connections
+        
+    def create_visualization_infrastructure(self):
+        """Create shared visualization infrastructure for all files"""
+        return {
+            "chart_types": {
+                "medical_imaging": ["heatmaps", "roi_overlay", "confidence_bars", "pathology_distribution"],
+                "clinical_data": ["risk_radar", "timeline_charts", "decision_trees", "guideline_compliance"],
+                "drug_safety": ["interaction_matrix", "safety_heatmap", "dosage_curves", "side_effect_network"],
+                "research": ["trial_matching", "evidence_network", "publication_trends", "impact_analysis"],
+                "patient_history": ["temporal_trends", "lab_correlations", "medication_timeline", "outcome_tracking"]
+            },
+            "libraries": {
+                "matplotlib": "Static medical charts and scientific plots",
+                "plotly": "Interactive dashboards and 3D visualizations", 
+                "seaborn": "Statistical visualizations and heatmaps",
+                "networkx": "Network analysis for drug interactions and research connections"
+            },
+            "color_schemes": {
+                "medical": ["#E74C3C", "#3498DB", "#2ECC71", "#F39C12", "#9B59B6"],
+                "safety": ["#27AE60", "#F1C40F", "#E67E22", "#E74C3C"],
+                "clinical": ["#2C3E50", "#34495E", "#7F8C8D", "#BDC3C7"]
+            }
+        }
+        
+    def generate_integration_report(self):
+        """Generate comprehensive integration report"""
+        connections = self.get_system_connections()
+        viz_infrastructure = self.create_visualization_infrastructure()
+        
+        report = {
+            "system_overview": {
+                "total_notebooks": len(self.system_map["notebooks"]),
+                "total_agents": len(self.system_map["agents"]),
+                "total_connections": sum(len(conns) for conns in connections.values()),
+                "analysis_timestamp": datetime.now().isoformat()
+            },
+            "file_mapping": self.system_map,
+            "interconnections": connections,
+            "visualization_infrastructure": viz_infrastructure,
+            "integration_status": "Ready for enhancement with graph features"
+        }
+        
+        return report
+
+def main():
+    """Generate comprehensive system analysis and integration mapping"""
+    print("🔗 Multi-Agent Medical AI Integration Analysis")
+    print("=" * 60)
+    
+    integration_system = MedicalAIIntegrationSystem()
+    report = integration_system.generate_integration_report()
+    
+    # Save integration report
+    with open("system_integration_report.json", "w") as f:
+        json.dump(report, f, indent=2)
+    
+    print("📊 System Analysis Complete:")
+    print(f"   📔 Notebooks Analyzed: {report['system_overview']['total_notebooks']}")
+    print(f"   🤖 Agents Mapped: {report['system_overview']['total_agents']}")
+    print(f"   🔗 Connections Found: {report['system_overview']['total_connections']}")
+    
+    print("\n📋 File Interconnections:")
+    for connection_type, connections in report["interconnections"].items():
+        print(f"   {connection_type}: {len(connections)} mappings")
+    
+    print(f"\n📁 Integration report saved: system_integration_report.json")
+    print("✅ System ready for graph feature integration!")
+    
+    return report
+
+if __name__ == "__main__":
+    main()

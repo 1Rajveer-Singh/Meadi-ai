@@ -1,0 +1,70 @@
+# Medical AI Platform - Simple Services (MongoDB, Redis, MinIO)
+# No authentication for development speed
+
+services:
+  # MongoDB Database - No Auth for Development
+  mongodb:
+    image: mongo:7.0
+    container_name: medical-ai-mongodb-simple
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: medical_ai_platform
+    volumes:
+      - mongodb_simple_data:/data/db
+    networks:
+      - medical-ai-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache and Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: medical-ai-redis-simple
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_simple_data:/data
+    networks:
+      - medical-ai-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: medical-ai-minio-simple
+    restart: unless-stopped
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: medical_minio_2024
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_simple_data:/data
+    networks:
+      - medical-ai-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  medical-ai-network:
+    driver: bridge
+
+volumes:
+  mongodb_simple_data:
+  redis_simple_data:
+  minio_simple_data:

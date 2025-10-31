@@ -1,0 +1,417 @@
+# 🐳 Docker Infrastructure Setup
+
+version: '3.8'
+
+services:
+  # 🔥 MongoDB - Primary Database
+  mongodb:
+    image: mongo:7.0
+    container_name: medical_ai_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: medical_ai_secure_2024
+      MONGO_INITDB_DATABASE: medical_ai_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+      - ./docker/mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - medical_ai_network
+    command: mongod --auth --replSet rs0 --bind_ip_all
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ⚡ Redis - Caching & Session Management
+  redis:
+    image: redis:7.2-alpine
+    container_name: medical_ai_redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: redis_medical_ai_2024
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - medical_ai_network
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 📁 MinIO - Object Storage for Medical Images
+  minio:
+    image: minio/minio:RELEASE.2024-03-15T01-07-19Z
+    container_name: medical_ai_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: medical_ai_admin
+      MINIO_ROOT_PASSWORD: medical_ai_minio_secure_2024
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
+    ports:
+      - "9000:9000"   # API port
+      - "9001:9001"   # Console port
+    volumes:
+      - minio_data:/data
+    networks:
+      - medical_ai_network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🤖 FastAPI Backend - Medical AI API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: medical_ai_backend
+    restart: unless-stopped
+    environment:
+      # Database Configuration
+      MONGODB_URL: mongodb://admin:medical_ai_secure_2024@mongodb:27017/medical_ai_db?authSource=admin
+      REDIS_URL: redis://:redis_medical_ai_2024@redis:6379/0
+      
+      # MinIO Configuration
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: medical_ai_admin
+      MINIO_SECRET_KEY: medical_ai_minio_secure_2024
+      MINIO_BUCKET_IMAGES: medical-images
+      MINIO_BUCKET_DOCUMENTS: medical-documents
+      MINIO_BUCKET_REPORTS: medical-reports
+      
+      # AI Models Configuration
+      AI_MODELS_PATH: /app/models
+      MONAI_MODEL_PATH: /app/models/monai
+      HUGGINGFACE_CACHE_DIR: /app/cache/huggingface
+      TORCH_HOME: /app/cache/torch
+      
+      # Security Configuration
+      SECRET_KEY: medical_ai_super_secure_jwt_key_2024_production
+      ACCESS_TOKEN_EXPIRE_MINUTES: 480
+      ALGORITHM: HS256
+      
+      # API Configuration
+      API_V1_STR: /api/v1
+      PROJECT_NAME: Medical AI System
+      VERSION: 2.0.0
+      DEBUG: false
+      
+      # Performance Configuration
+      WORKERS: 4
+      MAX_CONNECTIONS: 100
+      TIMEOUT: 300
+      
+      # Logging Configuration
+      LOG_LEVEL: INFO
+      LOG_FILE: /app/logs/medical_ai.log
+      
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ai_models:/app/models
+      - ai_cache:/app/cache  
+      - backend_logs:/app/logs
+    networks:
+      - medical_ai_network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 🧠 MONAI Image Analysis Agent
+  monai_agent:
+    build:
+      context: ./backend/agents/monai
+      dockerfile: Dockerfile
+    container_name: medical_ai_monai_agent
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://:redis_medical_ai_2024@redis:6379/0
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: medical_ai_admin
+      MINIO_SECRET_KEY: medical_ai_minio_secure_2024
+      MODEL_PATH: /app/models/monai_v2.1.pth
+      DEVICE: cuda
+      BATCH_SIZE: 4
+      GPU_MEMORY_FRACTION: 0.8
+    volumes:
+      - ai_models:/app/models
+      - ai_cache:/app/cache
+      - monai_logs:/app/logs
+    networks:
+      - medical_ai_network
+    depends_on:
+      - redis
+      - minio
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import torch; print('GPU available:', torch.cuda.is_available())"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+
+  # 📊 History Synthesis Agent  
+  history_agent:
+    build:
+      context: ./backend/agents/history
+      dockerfile: Dockerfile
+    container_name: medical_ai_history_agent
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://:redis_medical_ai_2024@redis:6379/0
+      MONGODB_URL: mongodb://admin:medical_ai_secure_2024@mongodb:27017/medical_ai_db?authSource=admin
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY}
+      MODEL_NAME: microsoft/DialoGPT-medium
+      MAX_HISTORY_LENGTH: 10000
+    volumes:
+      - ai_models:/app/models
+      - ai_cache:/app/cache
+      - history_logs:/app/logs
+    networks:
+      - medical_ai_network
+    depends_on:
+      - redis
+      - mongodb
+    healthcheck:
+      test: ["CMD", "python", "-c", "import transformers; print('Transformers loaded')"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+
+  # 💊 Drug Interaction Agent
+  drug_agent:
+    build:
+      context: ./backend/agents/drug_checker
+      dockerfile: Dockerfile
+    container_name: medical_ai_drug_agent
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://:redis_medical_ai_2024@redis:6379/0
+      MONGODB_URL: mongodb://admin:medical_ai_secure_2024@mongodb:27017/medical_ai_db?authSource=admin
+      DRUG_DATABASE_PATH: /app/data/drug_interactions.db
+      FDA_API_KEY: ${FDA_API_KEY}
+      RXNORM_API_URL: https://rxnav.nlm.nih.gov/REST
+      ACCURACY_TARGET: 0.98
+    volumes:
+      - drug_data:/app/data
+      - drug_logs:/app/logs
+    networks:
+      - medical_ai_network
+    depends_on:
+      - redis
+      - mongodb
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sqlite3; print('Drug DB ready')"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+
+  # 🔬 Research Agent
+  research_agent:
+    build:
+      context: ./backend/agents/research
+      dockerfile: Dockerfile
+    container_name: medical_ai_research_agent
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://:redis_medical_ai_2024@redis:6379/0
+      MONGODB_URL: mongodb://admin:medical_ai_secure_2024@mongodb:27017/medical_ai_db?authSource=admin
+      PUBMED_API_KEY: ${PUBMED_API_KEY}
+      SEMANTIC_SCHOLAR_API_KEY: ${SEMANTIC_SCHOLAR_API_KEY}
+      ARXIV_API_URL: http://export.arxiv.org/api/query
+      CLINICAL_TRIALS_API_URL: https://clinicaltrials.gov/api
+      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+    volumes:
+      - research_data:/app/data
+      - ai_cache:/app/cache
+      - research_logs:/app/logs
+    networks:
+      - medical_ai_network
+    depends_on:
+      - redis
+      - mongodb
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sentence_transformers; print('Research agent ready')"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+
+  # ⚛️ React Frontend - Development Mode
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: medical_ai_frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api/v1
+      VITE_WS_BASE_URL: ws://localhost:8000/ws
+      VITE_MINIO_ENDPOINT: http://localhost:9000
+      VITE_APP_NAME: Medical AI System
+      VITE_APP_VERSION: 2.0.0
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - medical_ai_network
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0
+
+  # 📈 Monitoring & Observability
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    container_name: medical_ai_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - medical_ai_network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: medical_ai_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: grafana_admin_2024
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - medical_ai_network
+    depends_on:
+      - prometheus
+
+  # 🔍 Elasticsearch for Logging
+  elasticsearch:
+    image: elasticsearch:8.11.3
+    container_name: medical_ai_elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - medical_ai_network
+
+  # 📊 Kibana for Log Visualization
+  kibana:
+    image: kibana:8.11.3
+    container_name: medical_ai_kibana
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - medical_ai_network
+    depends_on:
+      - elasticsearch
+
+  # 🌐 Nginx - Reverse Proxy & Load Balancer
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: medical_ai_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+      - nginx_logs:/var/log/nginx
+    networks:
+      - medical_ai_network
+    depends_on:
+      - frontend
+      - backend
+
+# 📦 Named Volumes for Data Persistence
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+  ai_models:
+    driver: local
+  ai_cache:
+    driver: local
+  backend_logs:
+    driver: local
+  monai_logs:
+    driver: local
+  history_logs:
+    driver: local
+  drug_logs:
+    driver: local
+  drug_data:
+    driver: local
+  research_logs:
+    driver: local
+  research_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+# 🌐 Networks
+networks:
+  medical_ai_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

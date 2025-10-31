@@ -1,0 +1,32 @@
+# 🧠 MONAI Agent Requirements
+
+# Core MONAI framework
+monai[all]>=1.3.0
+
+# PyTorch for deep learning
+torch>=2.1.0
+torchvision>=0.16.0
+
+# Medical imaging libraries
+pydicom>=2.4.3
+nibabel>=5.1.0
+simpleitk>=2.3.1
+
+# Computer vision
+opencv-python-headless>=4.8.0
+scikit-image>=0.21.0
+Pillow>=10.0.0
+
+# Data processing
+numpy>=1.24.0
+scipy>=1.11.0
+
+# Async and Redis
+asyncio>=3.4.3
+aioredis>=2.0.1
+
+# Object storage
+minio>=7.1.0
+
+# Utilities
+python-dateutil>=2.8.2
