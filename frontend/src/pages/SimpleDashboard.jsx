@@ -207,6 +207,56 @@ const HospitalDashboard = () => {
       status: "completed",
       urgency: "routine",
       doctor: "Dr. Johnson"
+    },
+    {
+      patientId: "P-2024-1152",
+      name: "Jessica Martinez",
+      date: "2024-10-10 13:30",
+      diagnosis: "Suspected Pneumothorax",
+      confidence: 88,
+      status: "completed",
+      urgency: "urgent",
+      doctor: "Dr. Smith"
+    },
+    {
+      patientId: "P-2024-1151",
+      name: "Robert Lee",
+      date: "2024-10-10 13:15",
+      diagnosis: "Atrial Fibrillation",
+      confidence: 95,
+      status: "completed",
+      urgency: "routine",
+      doctor: "Dr. Anderson"
+    },
+    {
+      patientId: "P-2024-1150",
+      name: "Amanda White",
+      date: "2024-10-10 13:00",
+      diagnosis: "Kidney Stone Detected",
+      confidence: 91,
+      status: "completed",
+      urgency: "routine",
+      doctor: "Dr. Brown"
+    },
+    {
+      patientId: "P-2024-1149",
+      name: "Christopher Davis",
+      date: "2024-10-10 12:45",
+      diagnosis: "Pulmonary Edema",
+      confidence: 93,
+      status: "completed",
+      urgency: "urgent",
+      doctor: "Dr. Wilson"
+    },
+    {
+      patientId: "P-2024-1148",
+      name: "Maria Garcia",
+      date: "2024-10-10 12:30",
+      diagnosis: "Cervical Spine Injury",
+      confidence: 96,
+      status: "completed",
+      urgency: "urgent",
+      doctor: "Dr. Taylor"
     }
   ];
 
@@ -662,9 +712,9 @@ const HospitalDashboard = () => {
         </div>
 
         {/* Recent Diagnoses Table & Agent Performance */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8 xl:items-stretch">
           {/* Recent Diagnoses Table */}
-          <div className="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Diagnoses</h3>
@@ -681,7 +731,7 @@ const HospitalDashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto flex-1">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
@@ -744,14 +794,14 @@ const HospitalDashboard = () => {
           </div>
 
           {/* Agent Performance Metrics */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Cpu className="w-5 h-5 text-purple-600 mr-2" />
                 Agent Performance
               </h3>
             </div>
-            <div className="p-6">
+            <div className="p-6 flex-1 overflow-auto">
               <div className="space-y-4">
                 {agentMetrics.map((agent, index) => (
                   <div key={agent.name} className="p-4 bg-gray-50 rounded-lg">

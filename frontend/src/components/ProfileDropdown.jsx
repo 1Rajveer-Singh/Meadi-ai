@@ -46,82 +46,10 @@ const ProfileDropdown = ({ onClose }) => {
   };
 
   const quickActions = [
-    { icon: Activity, label: "My Dashboard", path: "/dashboard" },
-    { icon: User, label: "View My Profile", path: "/profile" },
-    {
-      icon: TrendingUp,
-      label: "My Performance Metrics",
-      path: "/analytics?user=me",
-    },
-    { icon: Calendar, label: "My Schedule", path: "/schedule" },
+    { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
-  const settingsMenu = [
-    {
-      section: "Account",
-      items: [
-        { icon: Settings, label: "Settings", path: "/settings", badge: null },
-        {
-          icon: Bell,
-          label: "Notification Preferences",
-          path: "/settings?tab=notifications",
-          badge: null,
-        },
-        {
-          icon: Palette,
-          label: "Appearance & Accessibility",
-          path: "/settings?tab=display",
-          badge: null,
-        },
-        {
-          icon: Shield,
-          label: "Security & Privacy",
-          path: "/settings?tab=security",
-          badge: null,
-        },
-      ],
-    },
-    {
-      section: "Organization",
-      items: [
-        {
-          icon: Building,
-          label: "Institution & Department Info",
-          path: "/settings?tab=organization",
-          badge: null,
-        },
-        {
-          icon: Smartphone,
-          label: "Connected Devices & Apps",
-          path: "/settings?tab=devices",
-          badge: "3",
-        },
-        {
-          icon: CreditCard,
-          label: "Billing & Subscription",
-          path: "/settings?tab=billing",
-          badge: null,
-        },
-      ],
-    },
-    {
-      section: "Support",
-      items: [
-        {
-          icon: HelpCircle,
-          label: "Help & Support",
-          path: "/help",
-          badge: null,
-        },
-        {
-          icon: BookOpen,
-          label: "Documentation & Training",
-          path: "/docs",
-          badge: "New",
-        },
-      ],
-    },
-  ];
+  const settingsMenu = [];
 
   const handleStatusChange = (newStatus) => {
     console.log("Changing status to:", newStatus);
@@ -194,72 +122,66 @@ const ProfileDropdown = ({ onClose }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-2 py-3 bg-gray-50 border-b border-gray-200">
-        <div className="grid grid-cols-2 gap-2">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <Link
-                key={action.path}
-                to={action.path}
-                onClick={onClose}
-                className="flex items-center space-x-2 px-3 py-2 bg-white hover:bg-primary-50 hover:text-primary-600 rounded-lg text-gray-700 text-xs font-medium transition-colors group"
-              >
-                <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="line-clamp-1">{action.label}</span>
-              </Link>
-            );
-          })}
-        </div>
+      <div className="px-2 py-3 border-b border-gray-200">
+        <Link
+          to="/settings"
+          onClick={onClose}
+          className="flex items-center space-x-3 px-4 py-2.5 bg-white hover:bg-gray-50 rounded-lg text-gray-700 hover:text-primary-600 transition-colors group"
+        >
+          <Settings className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+          <span className="text-sm font-medium">Settings</span>
+        </Link>
       </div>
 
-      {/* Settings Menu */}
-      <div className="max-h-96 overflow-y-auto custom-scrollbar">
-        {settingsMenu.map((section, index) => (
-          <div
-            key={section.section}
-            className={index > 0 ? "border-t border-gray-200" : ""}
-          >
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                {section.section}
-              </h4>
+      {/* Settings Menu - Hidden since empty */}
+      {settingsMenu.length > 0 && (
+        <div className="max-h-96 overflow-y-auto custom-scrollbar">
+          {settingsMenu.map((section, index) => (
+            <div
+              key={section.section}
+              className={index > 0 ? "border-t border-gray-200" : ""}
+            >
+              <div className="px-4 py-2 bg-gray-50">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  {section.section}
+                </h4>
+              </div>
+              <div className="py-1">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={onClose}
+                      className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 text-gray-700 hover:text-primary-600 transition-colors group"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Icon className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                        <span className="text-sm font-medium">{item.label}</span>
+                      </div>
+                      {item.badge && (
+                        <span
+                          className={`
+                          px-2 py-0.5 rounded-full text-xs font-medium
+                          ${
+                            item.badge === "New"
+                              ? "bg-health-100 text-health-700"
+                              : "bg-gray-100 text-gray-700"
+                          }
+                        `}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-            <div className="py-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={onClose}
-                    className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 text-gray-700 hover:text-primary-600 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Icon className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
-                      <span className="text-sm font-medium">{item.label}</span>
-                    </div>
-                    {item.badge && (
-                      <span
-                        className={`
-                        px-2 py-0.5 rounded-full text-xs font-medium
-                        ${
-                          item.badge === "New"
-                            ? "bg-health-100 text-health-700"
-                            : "bg-gray-100 text-gray-700"
-                        }
-                      `}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Logout */}
       <div className="border-t border-gray-200 p-2">
