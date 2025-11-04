@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import {
   Activity,
   Brain,
@@ -25,61 +25,62 @@ import {
   Database,
   Lock,
   Sparkles,
-  FileText
-} from 'lucide-react';
-import LandingNavBar from '../components/LandingNavBar';
-import AuthModal from '../components/AuthModal';
-import InteractiveFooter from '../components/InteractiveFooter';
-import DemoCredentialsSection from '../components/DemoCredentialsSection';
+  FileText,
+} from "lucide-react";
+import LandingNavBar from "../components/LandingNavBar";
+import AuthModal from "../components/AuthModal";
+import InteractiveFooter from "../components/InteractiveFooter";
+import DemoCredentialsSection from "../components/DemoCredentialsSection";
 
 const COLOR_VARIANTS = {
   primary: {
-    lightBg: 'bg-primary-50',
-    softBg: 'bg-primary-100',
-    border: 'border-primary-200',
-    icon: 'text-primary-600',
-    accent: 'text-primary-400',
-    gradient: 'from-primary-500 to-primary-600',
+    lightBg: "bg-primary-50",
+    softBg: "bg-primary-100",
+    border: "border-primary-200",
+    icon: "text-primary-600",
+    accent: "text-primary-400",
+    gradient: "from-primary-500 to-primary-600",
   },
   health: {
-    lightBg: 'bg-health-50',
-    softBg: 'bg-health-100',
-    border: 'border-health-200',
-    icon: 'text-health-600',
-    accent: 'text-health-400',
-    gradient: 'from-health-500 to-health-600',
+    lightBg: "bg-health-50",
+    softBg: "bg-health-100",
+    border: "border-health-200",
+    icon: "text-health-600",
+    accent: "text-health-400",
+    gradient: "from-health-500 to-health-600",
   },
   warning: {
-    lightBg: 'bg-warning-50',
-    softBg: 'bg-warning-100',
-    border: 'border-warning-200',
-    icon: 'text-warning-600',
-    accent: 'text-warning-400',
-    gradient: 'from-warning-500 to-warning-600',
+    lightBg: "bg-warning-50",
+    softBg: "bg-warning-100",
+    border: "border-warning-200",
+    icon: "text-warning-600",
+    accent: "text-warning-400",
+    gradient: "from-warning-500 to-warning-600",
   },
   alert: {
-    lightBg: 'bg-alert-50',
-    softBg: 'bg-alert-100',
-    border: 'border-alert-200',
-    icon: 'text-alert-600',
-    accent: 'text-alert-400',
-    gradient: 'from-alert-500 to-alert-600',
+    lightBg: "bg-alert-50",
+    softBg: "bg-alert-100",
+    border: "border-alert-200",
+    icon: "text-alert-600",
+    accent: "text-alert-400",
+    gradient: "from-alert-500 to-alert-600",
   },
 };
 
-const getColorVariant = (color) => COLOR_VARIANTS[color] ?? COLOR_VARIANTS.primary;
+const getColorVariant = (color) =>
+  COLOR_VARIANTS[color] ?? COLOR_VARIANTS.primary;
 
 const LandingPage = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState("login");
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   // AUTO-REDIRECT: If user is authenticated, redirect to dashboard
   useEffect(() => {
     if (!loading && user) {
-      console.log('🚀 User authenticated, redirecting to dashboard...');
-      navigate('/dashboard', { replace: true });
+      console.log("🚀 User authenticated, redirecting to dashboard...");
+      navigate("/dashboard", { replace: true });
     }
   }, [user, loading, navigate]);
 
@@ -91,10 +92,10 @@ const LandingPage = () => {
   // Show loading during authentication check
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     );
@@ -106,37 +107,37 @@ const LandingPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       {/* Landing Navigation Bar */}
       <LandingNavBar onAuthClick={handleAuthClick} />
 
       {/* Hero Section */}
       <HeroSection onAuthClick={handleAuthClick} />
-      
+
       {/* Problem Statement Banner */}
       <ProblemBanner />
-      
+
       {/* Multi-Agent System Showcase */}
       <AgentShowcase />
-      
+
       {/* Key Features Grid */}
       <FeaturesGrid />
-      
+
       {/* Impact Metrics */}
       <ImpactMetrics />
-      
+
       {/* How It Works */}
       <HowItWorks />
-      
+
       {/* Technology Showcase */}
       <TechnologyShowcase />
-      
+
       {/* Testimonials */}
       <Testimonials />
-      
+
       {/* Demo Credentials Section */}
       <DemoCredentialsSection onAuthClick={handleAuthClick} />
-      
+
       {/* Interactive Footer */}
       <InteractiveFooter onAuthClick={handleAuthClick} />
 
@@ -152,9 +153,9 @@ const LandingPage = () => {
 
 const HeroSection = ({ onAuthClick }) => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900">
+    <section className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 dark:from-gray-800 dark:via-gray-900 dark:to-black transition-colors duration-500">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-10">
+      <div className="absolute inset-0 overflow-hidden opacity-10 dark:opacity-5">
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -163,9 +164,9 @@ const HeroSection = ({ onAuthClick }) => {
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "linear"
+            ease: "linear",
           }}
-          className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"
+          className="absolute top-0 right-0 w-96 h-96 bg-white dark:bg-primary-400 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -175,9 +176,9 @@ const HeroSection = ({ onAuthClick }) => {
           transition={{
             duration: 25,
             repeat: Infinity,
-            ease: "linear"
+            ease: "linear",
           }}
-          className="absolute bottom-0 left-0 w-96 h-96 bg-health-500 rounded-full blur-3xl"
+          className="absolute bottom-0 left-0 w-96 h-96 bg-health-500 dark:bg-health-400 rounded-full blur-3xl"
         />
       </div>
 
@@ -217,7 +218,8 @@ const HeroSection = ({ onAuthClick }) => {
               transition={{ delay: 0.4 }}
               className="text-xl text-blue-100 mb-8 leading-relaxed"
             >
-              90% reduction in diagnostic delays • 25% fewer medication errors • Accessible healthcare for rural communities
+              90% reduction in diagnostic delays • 25% fewer medication errors •
+              Accessible healthcare for rural communities
             </motion.p>
 
             <motion.div
@@ -229,7 +231,7 @@ const HeroSection = ({ onAuthClick }) => {
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => onAuthClick('register')}
+                onClick={() => onAuthClick("register")}
                 className="relative group"
               >
                 <motion.div
@@ -248,7 +250,7 @@ const HeroSection = ({ onAuthClick }) => {
                   <ArrowRight className="w-5 h-5" />
                 </div>
               </motion.button>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -262,9 +264,9 @@ const HeroSection = ({ onAuthClick }) => {
             {/* Stats Pills */}
             <div className="grid grid-cols-3 gap-4 mt-12">
               {[
-                { value: '<2min', label: 'Diagnosis Time' },
-                { value: '85%+', label: 'Accuracy Rate' },
-                { value: '24/7', label: 'Availability' },
+                { value: "<2min", label: "Diagnosis Time" },
+                { value: "85%+", label: "Accuracy Rate" },
+                { value: "24/7", label: "Availability" },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -273,7 +275,9 @@ const HeroSection = ({ onAuthClick }) => {
                   transition={{ delay: 0.3 + index * 0.1 }}
                   className="bg-white bg-opacity-10 backdrop-blur rounded-lg px-4 py-3 text-center"
                 >
-                  <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+                  <div className="text-2xl font-bold text-white mb-1">
+                    {stat.value}
+                  </div>
                   <div className="text-sm text-blue-100">{stat.label}</div>
                 </motion.div>
               ))}
@@ -287,20 +291,23 @@ const HeroSection = ({ onAuthClick }) => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-8">
+            <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl dark:shadow-gray-900/50 p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
               <div className="flex items-center space-x-2 mb-6">
                 <div className="w-3 h-3 rounded-full bg-alert-500" />
                 <div className="w-3 h-3 rounded-full bg-warning-500" />
                 <div className="w-3 h-3 rounded-full bg-health-500" />
-              </div>
-
+              </div>{" "}
               {/* Animated Medical Icons */}
               <div className="grid grid-cols-2 gap-6">
-                {[ 
-                  { icon: Stethoscope, label: 'Patient Monitoring', color: 'primary' },
-                  { icon: Brain, label: 'AI Analysis', color: 'health' },
-                  { icon: Heart, label: 'Health Tracking', color: 'alert' },
-                  { icon: Microscope, label: 'Lab Results', color: 'warning' },
+                {[
+                  {
+                    icon: Stethoscope,
+                    label: "Patient Monitoring",
+                    color: "primary",
+                  },
+                  { icon: Brain, label: "AI Analysis", color: "health" },
+                  { icon: Heart, label: "Health Tracking", color: "alert" },
+                  { icon: Microscope, label: "Lab Results", color: "warning" },
                 ].map((item, index) => {
                   const variant = getColorVariant(item.color);
                   return (
@@ -314,10 +321,14 @@ const HeroSection = ({ onAuthClick }) => {
                         repeat: Infinity,
                         delay: index * 0.2,
                       }}
-                      className={`p-6 rounded-xl ${variant.lightBg} border-2 ${variant.border}`}
+                      className={`p-6 rounded-xl ${variant.lightBg} dark:bg-gray-700/50 border-2 ${variant.border} dark:border-gray-600 transition-colors duration-300`}
                     >
-                      <item.icon className={`w-8 h-8 ${variant.icon} mb-3`} />
-                      <div className="text-sm font-semibold text-gray-700">{item.label}</div>
+                      <item.icon
+                        className={`w-8 h-8 ${variant.icon} mb-3 transition-colors duration-300`}
+                      />
+                      <div className="text-sm font-semibold text-gray-700 dark:text-white transition-colors duration-300">
+                        {item.label}
+                      </div>
                     </motion.div>
                   );
                 })}
@@ -344,19 +355,20 @@ const HeroSection = ({ onAuthClick }) => {
 
 const ProblemBanner = () => {
   return (
-    <section className="bg-gray-900 py-16 relative overflow-hidden">
+    <section className="bg-gray-900 dark:bg-black py-16 relative overflow-hidden transition-colors duration-500">
       {/* Animated Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 dark:opacity-5">
         <motion.div
           animate={{
-            backgroundPosition: ['0% 0%', '100% 100%'],
+            backgroundPosition: ["0% 0%", "100% 100%"],
           }}
-          transition={{ duration: 30, repeat: Infinity, repeatType: 'reverse' }}
+          transition={{ duration: 30, repeat: Infinity, repeatType: "reverse" }}
           style={{
-            position: 'absolute',
+            position: "absolute",
             inset: 0,
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)',
-            backgroundSize: '30px 30px',
+            backgroundImage:
+              "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+            backgroundSize: "30px 30px",
           }}
         />
       </div>
@@ -366,7 +378,7 @@ const ProblemBanner = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="glass-card-secondary bg-white/5 backdrop-blur-md border border-white/10 p-8 lg:p-12 rounded-2xl"
+          className="glass-card-secondary bg-white/5 dark:bg-white/3 backdrop-blur-md border border-white/10 dark:border-white/5 p-8 lg:p-12 rounded-2xl transition-colors duration-300"
         >
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -379,12 +391,24 @@ const ProblemBanner = () => {
               </h2>
               <div className="space-y-4">
                 {[
-                  { icon: Clock, text: '48% of diagnostic errors are due to time constraints on clinicians' },
-                  { icon: Globe, text: '57% of world population lacks access to specialized medical expertise' },
-                  { icon: AlertCircle, text: '40% of radiologists report symptoms of burnout due to workload' },
-                  { icon: TrendingDown, text: 'Rural areas face 30% higher mortality rates due to delayed diagnoses' }
+                  {
+                    icon: Clock,
+                    text: "48% of diagnostic errors are due to time constraints on clinicians",
+                  },
+                  {
+                    icon: Globe,
+                    text: "57% of world population lacks access to specialized medical expertise",
+                  },
+                  {
+                    icon: AlertCircle,
+                    text: "40% of radiologists report symptoms of burnout due to workload",
+                  },
+                  {
+                    icon: TrendingDown,
+                    text: "Rural areas face 30% higher mortality rates due to delayed diagnoses",
+                  },
                 ].map((item, index) => (
-                  <motion.div 
+                  <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -400,19 +424,35 @@ const ProblemBanner = () => {
                 ))}
               </div>
             </motion.div>
-            
+
             {/* Stats */}
             <div>
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { value: '4.2M', label: 'Radiologist Shortage', 
-                    desc: 'Projected global shortage by 2028', color: 'alert' },
-                  { value: '68%', label: 'Diagnostic Delays', 
-                    desc: 'Cases with preventable delays', color: 'warning' },
-                  { value: '35%', label: 'Medical Errors', 
-                    desc: 'Due to information overload', color: 'health' },
-                  { value: '$240B', label: 'Annual Cost', 
-                    desc: 'From diagnostic errors in the US', color: 'primary' },
+                  {
+                    value: "4.2M",
+                    label: "Radiologist Shortage",
+                    desc: "Projected global shortage by 2028",
+                    color: "alert",
+                  },
+                  {
+                    value: "68%",
+                    label: "Diagnostic Delays",
+                    desc: "Cases with preventable delays",
+                    color: "warning",
+                  },
+                  {
+                    value: "35%",
+                    label: "Medical Errors",
+                    desc: "Due to information overload",
+                    color: "health",
+                  },
+                  {
+                    value: "$240B",
+                    label: "Annual Cost",
+                    desc: "From diagnostic errors in the US",
+                    color: "primary",
+                  },
                 ].map((stat, index) => {
                   const variant = getColorVariant(stat.color);
                   return (
@@ -424,8 +464,14 @@ const ProblemBanner = () => {
                       transition={{ delay: 0.3 + index * 0.1 }}
                       className="glass-card-secondary bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl"
                     >
-                      <div className={`text-3xl font-bold ${variant.accent} mb-2`}>{stat.value}</div>
-                      <div className="text-white font-medium mb-1">{stat.label}</div>
+                      <div
+                        className={`text-3xl font-bold ${variant.accent} mb-2`}
+                      >
+                        {stat.value}
+                      </div>
+                      <div className="text-white font-medium mb-1">
+                        {stat.label}
+                      </div>
                       <p className="text-gray-400 text-sm">{stat.desc}</p>
                     </motion.div>
                   );
@@ -443,36 +489,48 @@ const AgentShowcase = () => {
   const agents = [
     {
       icon: Microscope,
-      name: 'Image Analysis Agent',
-      description: 'Advanced medical image processing with MONAI framework. Detects anomalies in X-rays, MRI, and CT scans with 94% accuracy.',
-      features: ['Heatmap Generation', 'Anomaly Detection', 'Region Annotation'],
-      color: 'primary',
+      name: "Image Analysis Agent",
+      description:
+        "Advanced medical image processing with MONAI framework. Detects anomalies in X-rays, MRI, and CT scans with 94% accuracy.",
+      features: [
+        "Heatmap Generation",
+        "Anomaly Detection",
+        "Region Annotation",
+      ],
+      color: "primary",
     },
     {
       icon: BookOpen,
-      name: 'History Synthesis Agent',
-      description: 'Correlates patient medical history, lab results, and medications. Identifies risk factors and patterns.',
-      features: ['Timeline Analysis', 'Risk Prediction', 'Pattern Recognition'],
-      color: 'health',
+      name: "History Synthesis Agent",
+      description:
+        "Correlates patient medical history, lab results, and medications. Identifies risk factors and patterns.",
+      features: ["Timeline Analysis", "Risk Prediction", "Pattern Recognition"],
+      color: "health",
     },
     {
       icon: Pill,
-      name: 'Drug Interaction Agent',
-      description: '30% reduction in medication errors. Real-time checking of drug interactions and contraindications.',
-      features: ['Interaction Alerts', 'Alternative Suggestions', 'Dosage Validation'],
-      color: 'warning',
+      name: "Drug Interaction Agent",
+      description:
+        "30% reduction in medication errors. Real-time checking of drug interactions and contraindications.",
+      features: [
+        "Interaction Alerts",
+        "Alternative Suggestions",
+        "Dosage Validation",
+      ],
+      color: "warning",
     },
     {
       icon: Brain,
-      name: 'Research Agent',
-      description: 'Searches latest clinical trials and medical literature. Provides evidence-based recommendations.',
-      features: ['Literature Search', 'Clinical Trials', 'Guidelines Updates'],
-      color: 'alert',
+      name: "Research Agent",
+      description:
+        "Searches latest clinical trials and medical literature. Provides evidence-based recommendations.",
+      features: ["Literature Search", "Clinical Trials", "Guidelines Updates"],
+      color: "alert",
     },
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-20 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0 }}
@@ -480,11 +538,12 @@ const AgentShowcase = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
             Multi-Agent AI System
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Four specialized AI agents work in coordination to deliver comprehensive, explainable medical diagnostics
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto transition-colors duration-300">
+            Four specialized AI agents work in coordination to deliver
+            comprehensive, explainable medical diagnostics
           </p>
         </motion.div>
 
@@ -499,19 +558,32 @@ const AgentShowcase = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -10, scale: 1.02 }}
-                className="card hover:shadow-xl cursor-pointer group"
+                className="card hover:shadow-xl dark:hover:shadow-gray-900/50 cursor-pointer group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-300"
               >
-                <div className={`w-16 h-16 ${variant.softBg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <agent.icon className={`w-8 h-8 ${variant.icon}`} />
+                <div
+                  className={`w-16 h-16 ${variant.softBg} dark:bg-opacity-20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300`}
+                >
+                  <agent.icon
+                    className={`w-8 h-8 ${variant.icon} transition-colors duration-300`}
+                  />
                 </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{agent.name}</h3>
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{agent.description}</p>
-                
+
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-300">
+                  {agent.name}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed transition-colors duration-300">
+                  {agent.description}
+                </p>
+
                 <div className="space-y-2">
                   {agent.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center space-x-2 text-sm">
-                      <CheckCircle className={`w-4 h-4 ${variant.icon} flex-shrink-0`} />
+                    <div
+                      key={idx}
+                      className="flex items-center space-x-2 text-sm"
+                    >
+                      <CheckCircle
+                        className={`w-4 h-4 ${variant.icon} flex-shrink-0`}
+                      />
                       <span className="text-gray-700">{feature}</span>
                     </div>
                   ))}
@@ -532,44 +604,52 @@ const FeaturesGrid = () => {
   const features = [
     {
       icon: Zap,
-      title: 'Real-Time Analysis',
-      description: 'Get comprehensive diagnostic results in under 2 minutes with our AI-powered system',
-      color: 'warning',
+      title: "Real-Time Analysis",
+      description:
+        "Get comprehensive diagnostic results in under 2 minutes with our AI-powered system",
+      color: "warning",
     },
     {
       icon: Shield,
-      title: 'HIPAA Compliant',
-      description: 'End-to-end encryption and compliance with all healthcare data regulations',
-      color: 'health',
+      title: "HIPAA Compliant",
+      description:
+        "End-to-end encryption and compliance with all healthcare data regulations",
+      color: "health",
     },
     {
       icon: Brain,
-      title: 'Multi-Agent AI',
-      description: 'Four specialized agents working together for comprehensive analysis',
-      color: 'primary',
+      title: "Multi-Agent AI",
+      description:
+        "Four specialized agents working together for comprehensive analysis",
+      color: "primary",
     },
     {
       icon: Upload,
-      title: 'Easy Integration',
-      description: 'Seamless integration with existing PACS and EHR systems',
-      color: 'alert',
+      title: "Easy Integration",
+      description: "Seamless integration with existing PACS and EHR systems",
+      color: "alert",
     },
     {
       icon: BarChart3,
-      title: 'Advanced Analytics',
-      description: 'Track trends, identify patterns, and measure outcomes over time',
-      color: 'primary',
+      title: "Advanced Analytics",
+      description:
+        "Track trends, identify patterns, and measure outcomes over time",
+      color: "primary",
     },
     {
       icon: Database,
-      title: 'Knowledge Base',
-      description: 'Access to millions of medical cases and latest research papers',
-      color: 'health',
+      title: "Knowledge Base",
+      description:
+        "Access to millions of medical cases and latest research papers",
+      color: "health",
     },
   ];
 
   return (
-    <section id="features" className="py-20 bg-white">
+    <section
+      id="features"
+      className="py-20 bg-white dark:bg-gray-900 transition-colors duration-500"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -577,11 +657,12 @@ const FeaturesGrid = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
             Powerful Features for Modern Healthcare
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Everything you need to deliver accurate, fast, and reliable medical diagnostics
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
+            Everything you need to deliver accurate, fast, and reliable medical
+            diagnostics
           </p>
         </motion.div>
 
@@ -597,7 +678,7 @@ const FeaturesGrid = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="glass-card p-8 group cursor-pointer"
+                className="glass-card p-8 group cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-300"
               >
                 <motion.div
                   whileHover={{ rotate: 360, scale: 1.1 }}
@@ -606,8 +687,12 @@ const FeaturesGrid = () => {
                 >
                   <Icon className="w-7 h-7 text-white" />
                 </motion.div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-300">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed transition-colors duration-300">
+                  {feature.description}
+                </p>
               </motion.div>
             );
           })}
@@ -619,21 +704,21 @@ const FeaturesGrid = () => {
 
 const ImpactMetrics = () => {
   const metrics = [
-    { value: '1M+', label: 'Diagnoses Completed', icon: Heart },
-    { value: '90%', label: 'Reduction in Delays', icon: Clock },
-    { value: '25%', label: 'Fewer Med Errors', icon: Shield },
-    { value: '50K+', label: 'Healthcare Professionals', icon: Users },
+    { value: "1M+", label: "Diagnoses Completed", icon: Heart },
+    { value: "90%", label: "Reduction in Delays", icon: Clock },
+    { value: "25%", label: "Fewer Med Errors", icon: Shield },
+    { value: "50K+", label: "Healthcare Professionals", icon: Users },
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-900 relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-primary-600 via-primary-700 to-purple-900 dark:from-gray-800 dark:via-gray-900 dark:to-black relative overflow-hidden transition-colors duration-500">
       {/* Animated background */}
       <motion.div
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-10 dark:opacity-5"
         animate={{
-          backgroundPosition: ['0% 0%', '100% 100%'],
+          backgroundPosition: ["0% 0%", "100% 100%"],
         }}
-        transition={{ duration: 20, repeat: Infinity, repeatType: 'reverse' }}
+        transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -643,8 +728,10 @@ const ImpactMetrics = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-white mb-4">Real-World Impact</h2>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Real-World Impact
+          </h2>
+          <p className="text-xl text-blue-100 dark:text-blue-200 max-w-2xl mx-auto transition-colors duration-300">
             Transforming healthcare delivery with measurable results
           </p>
         </motion.div>
@@ -658,13 +745,17 @@ const ImpactMetrics = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1, type: 'spring' }}
+                transition={{ delay: index * 0.1, type: "spring" }}
                 whileHover={{ y: -10, scale: 1.05 }}
                 className="glass-card-secondary bg-white/10 backdrop-blur-lg p-8 text-center border border-white/20"
               >
                 <motion.div
                   animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: index * 0.2,
+                  }}
                 >
                   <Icon className="w-12 h-12 text-health-400 mx-auto mb-4" />
                 </motion.div>
@@ -689,33 +780,40 @@ const ImpactMetrics = () => {
 const HowItWorks = () => {
   const steps = [
     {
-      number: '01',
-      title: 'Upload Medical Data',
-      description: 'Upload medical images, patient history, and lab results through our secure platform',
+      number: "01",
+      title: "Upload Medical Data",
+      description:
+        "Upload medical images, patient history, and lab results through our secure platform",
       icon: Upload,
     },
     {
-      number: '02',
-      title: 'AI Analysis',
-      description: 'Four specialized AI agents analyze the data simultaneously in real-time',
+      number: "02",
+      title: "AI Analysis",
+      description:
+        "Four specialized AI agents analyze the data simultaneously in real-time",
       icon: Brain,
     },
     {
-      number: '03',
-      title: 'Comprehensive Report',
-      description: 'Receive detailed findings with explanations, confidence scores, and recommendations',
+      number: "03",
+      title: "Comprehensive Report",
+      description:
+        "Receive detailed findings with explanations, confidence scores, and recommendations",
       icon: FileText,
     },
     {
-      number: '04',
-      title: 'Expert Review',
-      description: 'Healthcare professionals review and validate AI findings before final diagnosis',
+      number: "04",
+      title: "Expert Review",
+      description:
+        "Healthcare professionals review and validate AI findings before final diagnosis",
       icon: CheckCircle,
     },
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-gray-50">
+    <section
+      id="how-it-works"
+      className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -723,10 +821,10 @@ const HowItWorks = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
             How It Works
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
             Simple, secure, and fast - from upload to diagnosis in minutes
           </p>
         </motion.div>
@@ -750,7 +848,7 @@ const HowItWorks = () => {
 
                 <motion.div
                   whileHover={{ y: -10, scale: 1.03 }}
-                  className="glass-card p-6 text-center relative z-10"
+                  className="glass-card p-6 text-center relative z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-300"
                 >
                   <motion.div
                     whileHover={{ rotate: 360 }}
@@ -760,9 +858,15 @@ const HowItWorks = () => {
                     <Icon className="w-10 h-10 text-white" />
                   </motion.div>
 
-                  <div className="text-sm font-bold text-primary-600 mb-2">STEP {step.number}</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
-                  <p className="text-gray-600">{step.description}</p>
+                  <div className="text-sm font-bold text-primary-600 dark:text-primary-400 mb-2 transition-colors duration-300">
+                    STEP {step.number}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-300">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                    {step.description}
+                  </p>
                 </motion.div>
               </motion.div>
             );
@@ -775,18 +879,21 @@ const HowItWorks = () => {
 
 const TechnologyShowcase = () => {
   const technologies = [
-    { name: 'Python FastAPI', icon: '🐍', desc: 'High-performance API' },
-    { name: 'React + Vite', icon: '⚛️', desc: 'Modern UI framework' },
-    { name: 'MONAI', icon: '🏥', desc: 'Medical imaging AI' },
-    { name: 'LangChain', icon: '🦜', desc: 'LLM orchestration' },
-    { name: 'MongoDB', icon: '🍃', desc: 'Flexible database' },
-    { name: 'Docker', icon: '🐳', desc: 'Containerization' },
-    { name: 'MinIO', icon: '📦', desc: 'Object storage' },
-    { name: 'Redis', icon: '⚡', desc: 'Fast caching' },
+    { name: "Python FastAPI", icon: "🐍", desc: "High-performance API" },
+    { name: "React + Vite", icon: "⚛️", desc: "Modern UI framework" },
+    { name: "MONAI", icon: "🏥", desc: "Medical imaging AI" },
+    { name: "LangChain", icon: "🦜", desc: "LLM orchestration" },
+    { name: "MongoDB", icon: "🍃", desc: "Flexible database" },
+    { name: "Docker", icon: "🐳", desc: "Containerization" },
+    { name: "MinIO", icon: "📦", desc: "Object storage" },
+    { name: "Redis", icon: "⚡", desc: "Fast caching" },
   ];
 
   return (
-    <section id="technology" className="py-20 bg-gray-900 text-white">
+    <section
+      id="technology"
+      className="py-20 bg-gray-900 dark:bg-black text-white transition-colors duration-500"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -794,9 +901,12 @@ const TechnologyShowcase = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4">Built with Cutting-Edge Technology</h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Powered by the latest in AI, cloud computing, and medical imaging technology
+          <h2 className="text-4xl font-bold mb-4">
+            Built with Cutting-Edge Technology
+          </h2>
+          <p className="text-xl text-gray-400 dark:text-gray-500 max-w-2xl mx-auto transition-colors duration-300">
+            Powered by the latest in AI, cloud computing, and medical imaging
+            technology
           </p>
         </motion.div>
 
@@ -825,30 +935,36 @@ const TechnologyShowcase = () => {
 const Testimonials = () => {
   const testimonials = [
     {
-      name: 'Dr. Sarah Johnson',
-      role: 'Chief Radiologist, Metro Hospital',
-      image: '👩‍⚕️',
-      quote: 'This AI system has transformed our radiology department. We\'ve reduced diagnostic time by 60% while maintaining accuracy.',
+      name: "Dr. Sarah Johnson",
+      role: "Chief Radiologist, Metro Hospital",
+      image: "👩‍⚕️",
+      quote:
+        "This AI system has transformed our radiology department. We've reduced diagnostic time by 60% while maintaining accuracy.",
       rating: 5,
     },
     {
-      name: 'Dr. Michael Chen',
-      role: 'Emergency Medicine Director',
-      image: '👨‍⚕️',
-      quote: 'In emergency situations, every second counts. This tool helps us make faster, more confident decisions.',
+      name: "Dr. Michael Chen",
+      role: "Emergency Medicine Director",
+      image: "👨‍⚕️",
+      quote:
+        "In emergency situations, every second counts. This tool helps us make faster, more confident decisions.",
       rating: 5,
     },
     {
-      name: 'Dr. Emily Rodriguez',
-      role: 'Rural Health Clinic',
-      image: '👩‍⚕️',
-      quote: 'We finally have access to specialist-level diagnostics in our rural community. It\'s been life-changing for our patients.',
+      name: "Dr. Emily Rodriguez",
+      role: "Rural Health Clinic",
+      image: "👩‍⚕️",
+      quote:
+        "We finally have access to specialist-level diagnostics in our rural community. It's been life-changing for our patients.",
       rating: 5,
     },
   ];
 
   return (
-    <section id="testimonials" className="py-20 bg-white">
+    <section
+      id="testimonials"
+      className="py-20 bg-white dark:bg-gray-900 transition-colors duration-500"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -856,11 +972,12 @@ const Testimonials = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
             Trusted by Healthcare Professionals
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Join thousands of doctors who are already using AI to improve patient care
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
+            Join thousands of doctors who are already using AI to improve
+            patient care
           </p>
         </motion.div>
 
@@ -873,7 +990,7 @@ const Testimonials = () => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -8, scale: 1.02 }}
-              className="glass-card p-8"
+              className="glass-card p-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-300"
             >
               <div className="flex items-center mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
@@ -889,13 +1006,19 @@ const Testimonials = () => {
                 ))}
               </div>
 
-              <p className="text-gray-700 mb-6 italic">"{testimonial.quote}"</p>
+              <p className="text-gray-700 dark:text-gray-100 mb-6 italic transition-colors duration-300">
+                "{testimonial.quote}"
+              </p>
 
               <div className="flex items-center">
                 <div className="text-4xl mr-3">{testimonial.image}</div>
                 <div>
-                  <div className="font-bold text-gray-900">{testimonial.name}</div>
-                  <div className="text-sm text-gray-600">{testimonial.role}</div>
+                  <div className="font-bold text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                    {testimonial.name}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                    {testimonial.role}
+                  </div>
                 </div>
               </div>
             </motion.div>

@@ -60,14 +60,14 @@ const DemoCredentialsCard = ({ isOpen, onClose }) => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="relative bg-white rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-300"
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
 
           {/* Header */}
@@ -75,10 +75,10 @@ const DemoCredentialsCard = ({ isOpen, onClose }) => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl mb-4">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Demo Login Credentials
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Choose any account to explore the platform
             </p>
           </div>
@@ -95,10 +95,12 @@ const DemoCredentialsCard = ({ isOpen, onClose }) => {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
                       {account.role}
                     </h3>
-                    <p className="text-sm text-gray-600">{account.name}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {account.name}
+                    </p>
                   </div>
                   <div
                     className={`px-3 py-1 rounded-full bg-gradient-to-r ${account.color} text-white text-xs font-semibold`}
@@ -109,10 +111,12 @@ const DemoCredentialsCard = ({ isOpen, onClose }) => {
 
                 <div className="space-y-2">
                   {/* Email */}
-                  <div className="bg-white rounded-lg p-3 flex items-center justify-between">
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-3 flex items-center justify-between transition-colors duration-300">
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 mb-1">Email</p>
-                      <p className="font-mono text-sm text-gray-900">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Email
+                      </p>
+                      <p className="font-mono text-sm text-gray-900 dark:text-gray-100">
                         {account.email}
                       </p>
                     </div>
@@ -120,18 +124,18 @@ const DemoCredentialsCard = ({ isOpen, onClose }) => {
                       onClick={() =>
                         copyToClipboard(account.email, `email-${index}`)
                       }
-                      className="ml-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="ml-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                     >
                       {copiedField === `email-${index}` ? (
                         <CheckCircle className="w-4 h-4 text-green-500" />
                       ) : (
-                        <Copy className="w-4 h-4 text-gray-400" />
+                        <Copy className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                       )}
                     </button>
                   </div>
 
                   {/* Password */}
-                  <div className="bg-white rounded-lg p-3 flex items-center justify-between">
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-3 flex items-center justify-between transition-colors duration-300">
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 mb-1">Password</p>
                       <p className="font-mono text-sm text-gray-900">

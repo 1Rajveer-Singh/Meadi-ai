@@ -9,8 +9,46 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-CJQ0vk3b.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-B4_TEPDp.css">
+    
+    <!-- Theme Initialization Script - Prevents Flash of Wrong Theme -->
+    <script>
+      (function() {
+        try {
+          // Check for saved theme preference or default to light
+          const savedTheme = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          // Determine theme: saved preference > system preference > light (default)
+          let theme = 'light'; // Default to light
+          if (savedTheme) {
+            theme = savedTheme;
+          } else if (prefersDark) {
+            theme = 'dark';
+          }
+          
+          // Apply theme immediately
+          const html = document.documentElement;
+          if (theme === 'dark') {
+            html.classList.add('dark');
+            html.setAttribute('data-theme', 'dark');
+          } else {
+            html.classList.remove('dark');
+            html.setAttribute('data-theme', 'light');
+          }
+          
+          // Save preference
+          localStorage.setItem('theme', theme);
+          
+          console.log(`🎨 Theme initialized on load: ${theme}`);
+        } catch (e) {
+          console.error('Theme initialization error:', e);
+          // Fallback to light mode
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-C7BroOy-.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-qz-GhJA0.css">
   </head>
   <body>
     <div id="root"></div>

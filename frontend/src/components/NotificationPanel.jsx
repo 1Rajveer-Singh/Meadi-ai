@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
   Check,
@@ -22,22 +22,23 @@ import {
   Pill,
   Microscope,
   Heart,
-  Brain
-} from 'lucide-react';
-import { useNotifications } from '@/contexts/NotificationContext';
-import { formatDistanceToNow } from 'date-fns';
+  Brain,
+} from "lucide-react";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { formatDistanceToNow } from "date-fns";
 
 const NotificationPanel = ({ onClose }) => {
-  const { notifications, markAsRead, markAllAsRead, unreadCount } = useNotifications();
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const { notifications, markAsRead, markAllAsRead, unreadCount } =
+    useNotifications();
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filters = [
-    { id: 'all', label: 'All', icon: Bell },
-    { id: 'critical', label: 'Critical', icon: AlertCircle },
-    { id: 'clinical', label: 'Clinical', icon: Activity },
-    { id: 'operational', label: 'Operational', icon: TrendingUp },
-    { id: 'system', label: 'System', icon: Settings },
+    { id: "all", label: "All", icon: Bell },
+    { id: "critical", label: "Critical", icon: AlertCircle },
+    { id: "clinical", label: "Clinical", icon: Activity },
+    { id: "operational", label: "Operational", icon: TrendingUp },
+    { id: "system", label: "System", icon: Settings },
   ];
 
   // Filter and search notifications
@@ -45,15 +46,16 @@ const NotificationPanel = ({ onClose }) => {
     let filtered = notifications;
 
     // Apply category filter
-    if (activeFilter !== 'all') {
-      filtered = filtered.filter(n => n.category === activeFilter);
+    if (activeFilter !== "all") {
+      filtered = filtered.filter((n) => n.category === activeFilter);
     }
 
     // Apply search
     if (searchQuery) {
-      filtered = filtered.filter(n =>
-        n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        n.description.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (n) =>
+          n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          n.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -63,27 +65,27 @@ const NotificationPanel = ({ onClose }) => {
   const getPriorityConfig = (priority) => {
     const configs = {
       critical: {
-        borderColor: 'border-alert-500',
-        iconBg: 'bg-alert-100',
-        iconColor: 'text-alert-600',
+        borderColor: "border-alert-500",
+        iconBg: "bg-alert-100",
+        iconColor: "text-alert-600",
         icon: AlertCircle,
       },
       high: {
-        borderColor: 'border-warning-500',
-        iconBg: 'bg-warning-100',
-        iconColor: 'text-warning-600',
+        borderColor: "border-warning-500",
+        iconBg: "bg-warning-100",
+        iconColor: "text-warning-600",
         icon: AlertTriangle,
       },
       medium: {
-        borderColor: 'border-blue-500',
-        iconBg: 'bg-blue-100',
-        iconColor: 'text-blue-600',
+        borderColor: "border-blue-500",
+        iconBg: "bg-blue-100",
+        iconColor: "text-blue-600",
         icon: Info,
       },
       low: {
-        borderColor: 'border-gray-400',
-        iconBg: 'bg-gray-100',
-        iconColor: 'text-gray-600',
+        borderColor: "border-gray-400",
+        iconBg: "bg-gray-100",
+        iconColor: "text-gray-600",
         icon: Info,
       },
     };
@@ -104,9 +106,9 @@ const NotificationPanel = ({ onClose }) => {
   };
 
   return (
-    <div className="notification-panel w-96">
+    <div className="notification-panel w-96 dark:bg-gray-800 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-3">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <Bell className="w-5 h-5 text-white" />
@@ -116,7 +118,7 @@ const NotificationPanel = ({ onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
+            className="p-1 hover:bg-white hover:bg-opacity-20 dark:hover:bg-white dark:hover:bg-opacity-10 rounded transition-colors"
           >
             <X className="w-5 h-5 text-white" />
           </button>
@@ -124,19 +126,19 @@ const NotificationPanel = ({ onClose }) => {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-300" />
           <input
             type="text"
             placeholder="Search notifications..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 text-white placeholder-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
+            className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 dark:bg-gray-700 dark:bg-opacity-50 text-white placeholder-gray-200 dark:placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white dark:focus:ring-primary-400 transition-colors duration-300"
           />
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div className="flex space-x-1 overflow-x-auto custom-scrollbar">
           {filters.map((filter) => {
             const Icon = filter.icon;
@@ -146,9 +148,10 @@ const NotificationPanel = ({ onClose }) => {
                 onClick={() => setActiveFilter(filter.id)}
                 className={`
                   flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap
-                  ${activeFilter === filter.id
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'text-gray-600 hover:bg-gray-100'
+                  ${
+                    activeFilter === filter.id
+                      ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                      : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
                   }
                 `}
               >
@@ -161,32 +164,32 @@ const NotificationPanel = ({ onClose }) => {
       </div>
 
       {/* Actions Bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200">
+      <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <button
           onClick={markAllAsRead}
           disabled={unreadCount === 0}
-          className="text-xs text-primary-600 hover:text-primary-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
         >
           Mark all as read
         </button>
-        <button className="p-1 text-gray-600 hover:text-primary-600 rounded transition-colors">
+        <button className="p-1 text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 rounded transition-colors">
           <Settings className="w-4 h-4" />
         </button>
       </div>
 
       {/* Notifications List */}
-      <div className="max-h-96 overflow-y-auto custom-scrollbar bg-white">
+      <div className="max-h-96 overflow-y-auto custom-scrollbar bg-white dark:bg-gray-800 transition-colors duration-300">
         {filteredNotifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
-            <Bell className="w-12 h-12 text-gray-300 mb-3" />
-            <p className="text-gray-500 text-sm text-center">
+            <Bell className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" />
+            <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
               {searchQuery
-                ? 'No notifications match your search'
-                : 'No notifications to display'}
+                ? "No notifications match your search"
+                : "No notifications to display"}
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {filteredNotifications.map((notification) => (
               <NotificationCard
                 key={notification.id}
@@ -199,8 +202,8 @@ const NotificationPanel = ({ onClose }) => {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-        <button className="w-full text-center text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors">
+      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <button className="w-full text-center text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium transition-colors">
           View Archive
         </button>
       </div>
@@ -218,7 +221,7 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
       onMarkAsRead(notification.id);
     }
     // Handle action routing here
-    console.log('Action:', action, 'Notification:', notification.id);
+    console.log("Action:", action, "Notification:", notification.id);
   };
 
   return (
@@ -227,15 +230,21 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       className={`
-        px-4 py-3 cursor-pointer transition-colors
-        ${!notification.read ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'}
+        px-4 py-3 cursor-pointer transition-colors duration-300
+        ${
+          !notification.read
+            ? "bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30"
+            : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
+        }
         border-l-4 ${priorityConfig.borderColor}
       `}
       onClick={() => !notification.read && onMarkAsRead(notification.id)}
     >
       <div className="flex items-start space-x-3">
         {/* Icon */}
-        <div className={`flex-shrink-0 w-10 h-10 ${priorityConfig.iconBg} rounded-full flex items-center justify-center`}>
+        <div
+          className={`flex-shrink-0 w-10 h-10 ${priorityConfig.iconBg} rounded-full flex items-center justify-center`}
+        >
           <PriorityIcon className={`w-5 h-5 ${priorityConfig.iconColor}`} />
         </div>
 
@@ -243,21 +252,27 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
         <div className="flex-1 min-w-0">
           {/* Title & Category */}
           <div className="flex items-start justify-between mb-1">
-            <h4 className={`text-sm font-semibold ${!notification.read ? 'text-gray-900' : 'text-gray-700'} line-clamp-1`}>
+            <h4
+              className={`text-sm font-semibold ${
+                !notification.read
+                  ? "text-gray-900 dark:text-gray-100"
+                  : "text-gray-700 dark:text-gray-300"
+              } line-clamp-1`}
+            >
               {notification.title}
             </h4>
             {!notification.read && (
-              <span className="flex-shrink-0 w-2 h-2 bg-primary-600 rounded-full ml-2 mt-1.5" />
+              <span className="flex-shrink-0 w-2 h-2 bg-primary-600 dark:bg-primary-400 rounded-full ml-2 mt-1.5" />
             )}
           </div>
 
           {/* Description */}
-          <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+          <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
             {notification.description}
           </p>
 
           {/* Metadata */}
-          <div className="flex items-center space-x-3 text-xs text-gray-500 mb-2">
+          <div className="flex items-center space-x-3 text-xs text-gray-500 dark:text-gray-400 mb-2">
             <div className="flex items-center space-x-1">
               <CategoryIcon className="w-3.5 h-3.5" />
               <span className="capitalize">{notification.category}</span>
@@ -265,7 +280,11 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
             <span>•</span>
             <div className="flex items-center space-x-1">
               <Clock className="w-3.5 h-3.5" />
-              <span>{formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}</span>
+              <span>
+                {formatDistanceToNow(new Date(notification.timestamp), {
+                  addSuffix: true,
+                })}
+              </span>
             </div>
           </div>
 
@@ -280,10 +299,11 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                     handleAction(action);
                   }}
                   className={`
-                    text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-                    ${action.primary
-                      ? 'bg-primary-600 text-white hover:bg-primary-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    text-xs px-3 py-1.5 rounded-md font-medium transition-colors duration-300
+                    ${
+                      action.primary
+                        ? "bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     }
                   `}
                 >
@@ -302,27 +322,27 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
 const getPriorityConfig = (priority) => {
   const configs = {
     critical: {
-      borderColor: 'border-alert-500',
-      iconBg: 'bg-alert-100',
-      iconColor: 'text-alert-600',
+      borderColor: "border-alert-500",
+      iconBg: "bg-alert-100",
+      iconColor: "text-alert-600",
       icon: AlertCircle,
     },
     high: {
-      borderColor: 'border-warning-500',
-      iconBg: 'bg-warning-100',
-      iconColor: 'text-warning-600',
+      borderColor: "border-warning-500",
+      iconBg: "bg-warning-100",
+      iconColor: "text-warning-600",
       icon: AlertTriangle,
     },
     medium: {
-      borderColor: 'border-blue-500',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
+      borderColor: "border-blue-500",
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
       icon: Info,
     },
     low: {
-      borderColor: 'border-gray-400',
-      iconBg: 'bg-gray-100',
-      iconColor: 'text-gray-600',
+      borderColor: "border-gray-400",
+      iconBg: "bg-gray-100",
+      iconColor: "text-gray-600",
       icon: Info,
     },
   };

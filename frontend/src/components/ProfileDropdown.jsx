@@ -74,10 +74,10 @@ const ProfileDropdown = ({ onClose }) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
-      className="w-80 bg-white rounded-lg shadow-notification overflow-hidden"
+      className="w-80 bg-white dark:bg-gray-800 rounded-lg shadow-notification overflow-hidden"
     >
       {/* User Identity Section */}
-      <div className="bg-gradient-to-br from-primary-600 to-primary-700 px-4 py-6">
+      <div className="bg-gradient-to-br from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 px-4 py-6">
         <div className="flex items-start space-x-4">
           {/* Avatar */}
           <div className="relative">
@@ -122,11 +122,11 @@ const ProfileDropdown = ({ onClose }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-2 py-3 border-b border-gray-200">
+      <div className="px-2 py-3 border-b border-gray-200 dark:border-gray-700">
         <Link
           to="/settings"
           onClick={onClose}
-          className="flex items-center space-x-3 px-4 py-2.5 bg-white hover:bg-gray-50 rounded-lg text-gray-700 hover:text-primary-600 transition-colors group"
+          className="flex items-center space-x-3 px-4 py-2.5 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors group"
         >
           <Settings className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
           <span className="text-sm font-medium">Settings</span>
@@ -158,7 +158,9 @@ const ProfileDropdown = ({ onClose }) => {
                     >
                       <div className="flex items-center space-x-3">
                         <Icon className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
-                        <span className="text-sm font-medium">{item.label}</span>
+                        <span className="text-sm font-medium">
+                          {item.label}
+                        </span>
                       </div>
                       {item.badge && (
                         <span
@@ -184,10 +186,10 @@ const ProfileDropdown = ({ onClose }) => {
       )}
 
       {/* Logout */}
-      <div className="border-t border-gray-200 p-2">
+      <div className="border-t border-gray-200 dark:border-gray-700 p-2">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-alert-50 hover:bg-alert-100 text-alert-600 hover:text-alert-700 rounded-lg font-medium text-sm transition-colors"
+          className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-alert-50 hover:bg-alert-100 dark:bg-alert-900/30 dark:hover:bg-alert-900/50 text-alert-600 hover:text-alert-700 dark:text-alert-400 dark:hover:text-alert-300 rounded-lg font-medium text-sm transition-colors"
         >
           <LogOut className="w-4 h-4" />
           <span>Logout</span>

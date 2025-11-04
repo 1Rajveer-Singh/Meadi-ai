@@ -179,10 +179,10 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="relative w-full max-w-md"
         >
-          <div className="glass-card p-8 relative overflow-hidden">
+          <div className="glass-card p-8 relative overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl transition-colors duration-300">
             {/* Animated background gradient */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-purple-500/10 to-pink-500/10"
+              className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-purple-500/10 to-pink-500/10 dark:from-primary-600/20 dark:via-purple-600/20 dark:to-pink-600/20"
               animate={{
                 backgroundPosition: ["0% 0%", "100% 100%"],
               }}
@@ -198,9 +198,9 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
               whileHover={{ scale: 1.1, rotate: 90 }}
               whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
+              className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10"
             >
-              <X className="w-5 h-5 text-gray-600" />
+              <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </motion.button>
 
             {/* Content */}
@@ -219,12 +219,12 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                   <Heart className="w-8 h-8 text-white" />
                 </motion.div>
 
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 dark:from-primary-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-2">
                   {mode === "login" && "Welcome Back"}
                   {mode === "register" && "Create Account"}
                   {mode === "forgot" && "Reset Password"}
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
                   {mode === "login" && "Sign in to access your dashboard"}
                   {mode === "register" && "Join us to revolutionize healthcare"}
                   {mode === "forgot" && "We'll send you a reset link"}
@@ -236,12 +236,12 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-4 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200"
+                  className="mb-4 p-4 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 transition-colors duration-300"
                 >
                   <div className="flex items-start mb-3">
-                    <Sparkles className="w-5 h-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5" />
+                    <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 flex-shrink-0 mt-0.5 transition-colors duration-300" />
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-800 text-sm mb-2">
+                      <h4 className="font-semibold text-gray-800 dark:text-white text-sm mb-2 transition-colors duration-300">
                         Try Demo Accounts (Click to Fill)
                       </h4>
                       <div className="grid grid-cols-1 gap-2">
@@ -257,21 +257,21 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                                 account.password
                               )
                             }
-                            className="bg-white/80 hover:bg-white p-2.5 rounded-lg text-left transition-all shadow-sm hover:shadow-md group"
+                            className="bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-700 p-2.5 rounded-lg text-left transition-all shadow-sm hover:shadow-md group"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2">
                                 <span className="text-lg">{account.icon}</span>
                                 <div>
-                                  <p className="font-medium text-gray-800 text-sm group-hover:text-primary-600 transition-colors">
+                                  <p className="font-medium text-gray-800 dark:text-white text-sm group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                     {account.label}
                                   </p>
-                                  <p className="text-xs text-gray-500 font-mono">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
                                     {account.email}
                                   </p>
                                 </div>
                               </div>
-                              <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-all" />
+                              <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 group-hover:translate-x-1 transition-all" />
                             </div>
                           </motion.button>
                         ))}
@@ -310,18 +310,20 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2 transition-colors duration-300">
                       Full Name
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`glass-input pl-10 w-full ${
-                          errors.name ? "border-alert-500" : ""
+                        className={`glass-input pl-10 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-primary-500 dark:focus:border-primary-400 transition-colors duration-300 ${
+                          errors.name
+                            ? "border-alert-500 dark:border-alert-400"
+                            : ""
                         }`}
                         placeholder="Dr. Jennifer Martinez"
                       />
@@ -345,18 +347,20 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: mode === "register" ? 0.2 : 0.1 }}
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2 transition-colors duration-300">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`glass-input pl-10 w-full ${
-                        errors.email ? "border-alert-500" : ""
+                      className={`glass-input pl-10 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-primary-500 dark:focus:border-primary-400 transition-colors duration-300 ${
+                        errors.email
+                          ? "border-alert-500 dark:border-alert-400"
+                          : ""
                       }`}
                       placeholder="doctor@hospital.com"
                     />
@@ -380,25 +384,27 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: mode === "register" ? 0.3 : 0.2 }}
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2 transition-colors duration-300">
                       Password
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className={`glass-input pl-10 pr-10 w-full ${
-                          errors.password ? "border-alert-500" : ""
+                        className={`glass-input pl-10 pr-10 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-primary-500 dark:focus:border-primary-400 transition-colors duration-300 ${
+                          errors.password
+                            ? "border-alert-500 dark:border-alert-400"
+                            : ""
                         }`}
                         placeholder="••••••••"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
                       >
                         {showPassword ? (
                           <EyeOff className="w-5 h-5" />
@@ -427,18 +433,20 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2 transition-colors duration-300">
                       Confirm Password
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
                       <input
                         type={showPassword ? "text" : "password"}
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
-                        className={`glass-input pl-10 w-full ${
-                          errors.confirmPassword ? "border-alert-500" : ""
+                        className={`glass-input pl-10 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-primary-500 dark:focus:border-primary-400 transition-colors duration-300 ${
+                          errors.confirmPassword
+                            ? "border-alert-500 dark:border-alert-400"
+                            : ""
                         }`}
                         placeholder="••••••••"
                       />
@@ -462,7 +470,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                     <button
                       type="button"
                       onClick={() => setMode("forgot")}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                      className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-300"
                     >
                       Forgot password?
                     </button>
@@ -531,38 +539,38 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                 </motion.button>
 
                 {/* Mode switch */}
-                <div className="text-center pt-4 border-t border-gray-200">
+                <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
                   {mode === "login" && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
                       Don't have an account?{" "}
                       <button
                         type="button"
                         onClick={() => setMode("register")}
-                        className="text-primary-600 hover:text-primary-700 font-semibold"
+                        className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors duration-300"
                       >
                         Sign up
                       </button>
                     </p>
                   )}
                   {mode === "register" && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
                       Already have an account?{" "}
                       <button
                         type="button"
                         onClick={() => setMode("login")}
-                        className="text-primary-600 hover:text-primary-700 font-semibold"
+                        className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors duration-300"
                       >
                         Sign in
                       </button>
                     </p>
                   )}
                   {mode === "forgot" && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
                       Remember your password?{" "}
                       <button
                         type="button"
                         onClick={() => setMode("login")}
-                        className="text-primary-600 hover:text-primary-700 font-semibold"
+                        className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors duration-300"
                       >
                         Sign in
                       </button>
@@ -575,9 +583,9 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="flex items-center justify-center space-x-2 text-xs text-gray-500 pt-4"
+                  className="flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-gray-400 pt-4 transition-colors duration-300"
                 >
-                  <Shield className="w-4 h-4 text-health-600" />
+                  <Shield className="w-4 h-4 text-health-600 dark:text-health-400 transition-colors duration-300" />
                   <span>HIPAA Compliant • End-to-End Encrypted</span>
                 </motion.div>
               </form>

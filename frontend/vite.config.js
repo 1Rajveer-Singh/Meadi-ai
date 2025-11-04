@@ -15,7 +15,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    // Use Vite's default dev port
+    port: 5173,
     host: true,
     strictPort: true,
     proxy: {

@@ -1,8 +1,31 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  // Safelist dynamically generated classes used via template strings
+  // (e.g., `bg-${color}-100`, `dark:bg-${color}-900/30`, `text-${color}-600`)
+  // so Tailwind doesn't purge them in production builds.
+  safelist: [
+    {
+      // Base color utilities that may be built dynamically
+      pattern:
+        /(bg|text|border)-(red|orange|yellow|green|blue|purple)-(50|100|200|300|400|500|600|700|800|900)/,
+      variants: ["dark", "hover"],
+    },
+    {
+      // Directional borders like border-t-red-500 used in templates
+      pattern:
+        /border-(t|b|l|r)-(red|orange|yellow|green|blue|purple)-(50|100|200|300|400|500|600|700|800|900)/,
+      variants: ["dark", "hover"],
+    },
+    {
+      // Opacity variants used in dark mode like bg-red-900/30
+      pattern: /bg-(red|orange|yellow|green|blue|purple)-900\/30/,
+      variants: ["dark"],
+    },
   ],
   theme: {
     extend: {

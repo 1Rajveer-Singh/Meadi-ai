@@ -27,6 +27,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import NotificationPanel from "./NotificationPanel";
 import ProfileDropdown from "./ProfileDropdown";
+import DarkModeToggle from "./DarkModeToggle";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -163,27 +164,28 @@ const NavigationBar = () => {
 
     if (active) {
       const colorMap = {
-        blue: "bg-blue-50 text-blue-700 shadow-sm border border-blue-100",
-        green: "bg-green-50 text-green-700 shadow-sm border border-green-100",
-        red: "bg-red-50 text-red-700 shadow-sm border border-red-100",
+        blue: "bg-blue-50 text-blue-700 shadow-sm border border-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800",
+        green:
+          "bg-green-50 text-green-700 shadow-sm border border-green-100 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800",
+        red: "bg-red-50 text-red-700 shadow-sm border border-red-100 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800",
         purple:
-          "bg-purple-50 text-purple-700 shadow-sm border border-purple-100",
+          "bg-purple-50 text-purple-700 shadow-sm border border-purple-100 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800",
       };
       return (
         colorMap[navItem.color] ||
-        "bg-gray-50 text-gray-700 shadow-sm border border-gray-100"
+        "bg-gray-50 text-gray-700 shadow-sm border border-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
       );
     }
 
-    return "text-gray-700 hover:text-blue-600 hover:bg-gray-50";
+    return "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800";
   };
 
   return (
     <nav
       className={`sticky top-0 z-40 transition-all duration-300 ${
         scrolled
-          ? "glass-nav shadow-lg"
-          : "bg-white/90 backdrop-blur-sm border-b border-gray-200"
+          ? "glass-nav shadow-lg dark:bg-gray-900/95 dark:border-gray-700"
+          : "bg-white/90 backdrop-blur-sm border-b border-gray-200 dark:bg-gray-900/90 dark:border-gray-700"
       }`}
     >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -209,14 +211,17 @@ const NavigationBar = () => {
             </div>
             <div className="hidden lg:block">
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent">
-                MedGuard <span className="text-gray-900">AI</span>
+                MedGuard{" "}
+                <span className="text-gray-900 dark:text-gray-100">AI</span>
               </h1>
-              <p className="text-xs text-gray-600 font-medium">
+              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                 Unified Hospital Portal
               </p>
             </div>
             <div className="hidden sm:block lg:hidden">
-              <h1 className="text-lg font-bold text-blue-700">MedGuard AI</h1>
+              <h1 className="text-lg font-bold text-blue-700 dark:text-blue-400">
+                MedGuard AI
+              </h1>
             </div>
           </Link>
 
@@ -367,6 +372,9 @@ const NavigationBar = () => {
 
           {/* Right Side Actions - Streamlined */}
           <div className="flex items-center space-x-3">
+            {/* Dark Mode Toggle */}
+            <DarkModeToggle />
+
             {/* Quick Emergency Access */}
             <div className="hidden md:flex items-center space-x-2">
               <Link to="/diagnosis/new?priority=emergency">
@@ -385,7 +393,7 @@ const NavigationBar = () => {
             <div className="relative" ref={notificationRef}>
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200 group"
+                className="relative p-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 group"
                 aria-label="Medical Alerts & Notifications"
               >
                 <Bell className="w-5 h-5" />
@@ -434,7 +442,7 @@ const NavigationBar = () => {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 group"
+                className="flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 group"
               >
                 <div className="flex items-center space-x-2">
                   {/* Professional Avatar */}
@@ -452,10 +460,10 @@ const NavigationBar = () => {
 
                   {/* Doctor Info - Hidden on small screens */}
                   <div className="hidden lg:block text-left">
-                    <p className="text-sm font-semibold text-gray-800">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                       {currentUser?.name || "Dr. Sarah Johnson"}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {currentUser?.profession ||
                         currentUser?.role ||
                         "Radiologist"}
@@ -464,7 +472,7 @@ const NavigationBar = () => {
                 </div>
 
                 <ChevronDown
-                  className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${
+                  className={`w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
                     showProfile ? "rotate-180" : ""
                   }`}
                 />
@@ -490,7 +498,7 @@ const NavigationBar = () => {
       </div>
 
       {/* Optimized Mobile Navigation (5 items) */}
-      <div className="md:hidden border-t border-gray-200 bg-white">
+      <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex justify-around px-2 py-1">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -506,9 +514,9 @@ const NavigationBar = () => {
                   ${
                     active
                       ? item.color === "green"
-                        ? "text-green-600 bg-green-50"
-                        : "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600"
+                        ? "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/30"
+                        : "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30"
+                      : "text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                   }
                   ${
                     item.highlight

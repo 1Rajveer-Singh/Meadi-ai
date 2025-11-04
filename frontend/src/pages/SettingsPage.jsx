@@ -188,8 +188,10 @@ const SettingsPage = () => {
     <SimpleLayout>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          Settings
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
           Manage your account settings and preferences
         </p>
       </div>
@@ -197,7 +199,7 @@ const SettingsPage = () => {
       <div className="flex gap-8">
         {/* Sidebar */}
         <div className="w-64 flex-shrink-0">
-          <div className="bg-white rounded-lg shadow-card p-4 sticky top-24">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-4 sticky top-24">
             <nav className="space-y-1">
               {sections.map((section) => {
                 const Icon = section.icon;
@@ -210,11 +212,11 @@ const SettingsPage = () => {
                       ${
                         activeSection === section.id
                           ? section.highlight
-                            ? "bg-red-50 text-red-700 border border-red-200"
-                            : "bg-primary-50 text-primary-700"
+                            ? "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
+                            : "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
                           : section.highlight
-                          ? "text-red-700 hover:bg-red-50"
-                          : "text-gray-700 hover:bg-gray-50"
+                          ? "text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                          : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                       }
                     `}
                   >
@@ -235,9 +237,9 @@ const SettingsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-lg shadow-card p-8"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-8"
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
               {sections.find((s) => s.id === activeSection)?.label}
             </h2>
 
