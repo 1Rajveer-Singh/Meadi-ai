@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  Bell, 
-  User, 
+import { useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  Bell,
+  User,
   Users,
   ChevronDown,
   X,
@@ -12,7 +12,6 @@ import {
   AlertTriangle,
   Info,
   Search,
-  Settings,
   Filter,
   Sparkles,
   LayoutDashboard,
@@ -23,13 +22,13 @@ import {
   Zap,
   Heart,
   Brain,
-  Microscope
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import NotificationPanel from './NotificationPanel';
-import ProfileDropdown from './ProfileDropdown';
-import { useNotifications } from '@/contexts/NotificationContext';
-import { useAuth } from '@/contexts/AuthContext';
+  Microscope,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import NotificationPanel from "./NotificationPanel";
+import ProfileDropdown from "./ProfileDropdown";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const NavigationBar = () => {
   const location = useLocation();
@@ -46,7 +45,10 @@ const NavigationBar = () => {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setShowNotifications(false);
       }
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -54,78 +56,83 @@ const NavigationBar = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Real-time user updates
   useEffect(() => {
     setCurrentUser(user);
-    
+
     const handleUserUpdate = (event) => {
       setCurrentUser(event.detail);
     };
-    
-    window.addEventListener('userUpdated', handleUserUpdate);
-    return () => window.removeEventListener('userUpdated', handleUserUpdate);
+
+    window.addEventListener("userUpdated", handleUserUpdate);
+    return () => window.removeEventListener("userUpdated", handleUserUpdate);
   }, [user]);
 
   // Detect scroll for glass effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Optimized Navigation Structure (5 items instead of 7)
   const navItems = [
-    { 
-      path: '/dashboard', 
-      label: 'Dashboard', 
+    {
+      path: "/dashboard",
+      label: "Dashboard",
       icon: LayoutDashboard,
-      description: 'Hospital Overview',
-      color: 'blue'
+      description: "Hospital Overview",
+      color: "blue",
     },
-    { 
-      path: '/patients', 
-      label: 'Patients', 
+    {
+      path: "/patients",
+      label: "Patients",
       icon: Users,
-      description: 'Patient Management',
-      badge: '247',
-      color: 'green'
+      description: "Patient Management",
+      badge: "247",
+      color: "green",
     },
-    { 
-      path: '/analyze', 
-      label: 'Analyze', 
+    {
+      path: "/analyze",
+      label: "Analyze",
       icon: Zap,
-      description: 'AI Analysis Hub',
+      description: "AI Analysis Hub",
       highlight: true,
-      color: 'primary',
-      subPaths: ['/diagnosis/new', '/analysis/images', '/diagnosis/processing', '/diagnosis/results']
+      color: "primary",
+      subPaths: [
+        "/diagnosis/new",
+        "/analysis/images",
+        "/diagnosis/processing",
+        "/diagnosis/results",
+      ],
     },
-    { 
-      path: '/safety', 
-      label: 'Safety', 
+    {
+      path: "/safety",
+      label: "Safety",
       icon: Shield,
-      description: 'Safety & Guidelines',
-      color: 'red',
-      subPaths: ['/drug-checker']
+      description: "Safety & Guidelines",
+      color: "red",
+      subPaths: ["/drug-checker"],
     },
-    { 
-      path: '/insights', 
-      label: 'Insights', 
+    {
+      path: "/insights",
+      label: "Insights",
       icon: TrendingUp,
-      description: 'Analytics & Research',
-      color: 'purple',
-      subPaths: ['/analytics', '/ai-insights', '/research']
-    }
+      description: "Analytics & Research",
+      color: "purple",
+      subPaths: ["/analytics", "/ai-insights", "/research"],
+    },
   ];
 
   // Helper function to check if current path matches nav item (including sub-paths)
   const isActive = (navItem) => {
     if (location.pathname === navItem.path) return true;
     if (navItem.subPaths) {
-      return navItem.subPaths.some(subPath => 
+      return navItem.subPaths.some((subPath) =>
         location.pathname.startsWith(subPath)
       );
     }
@@ -135,53 +142,61 @@ const NavigationBar = () => {
   // Helper function to get the appropriate link path
   const getLinkPath = (navItem) => {
     // For analyze, route to the primary action
-    if (navItem.path === '/analyze') {
-      return '/diagnosis/new';
+    if (navItem.path === "/analyze") {
+      return "/diagnosis/new";
     }
     // For safety, route to drug checker
-    if (navItem.path === '/safety') {
-      return '/drug-checker';
+    if (navItem.path === "/safety") {
+      return "/drug-checker";
     }
     // For insights, route to analytics
-    if (navItem.path === '/insights') {
-      return '/analytics';
+    if (navItem.path === "/insights") {
+      return "/analytics";
     }
     return navItem.path;
   };
 
   const getColorClasses = (navItem, active) => {
     if (navItem.highlight) {
-      return 'bg-gradient-to-r from-blue-600 to-green-600 text-white hover:from-blue-700 hover:to-green-700 shadow-md hover:shadow-lg border-0';
+      return "bg-gradient-to-r from-blue-600 to-green-600 text-white hover:from-blue-700 hover:to-green-700 shadow-md hover:shadow-lg border-0";
     }
-    
+
     if (active) {
       const colorMap = {
-        blue: 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100',
-        green: 'bg-green-50 text-green-700 shadow-sm border border-green-100',
-        red: 'bg-red-50 text-red-700 shadow-sm border border-red-100',
-        purple: 'bg-purple-50 text-purple-700 shadow-sm border border-purple-100'
+        blue: "bg-blue-50 text-blue-700 shadow-sm border border-blue-100",
+        green: "bg-green-50 text-green-700 shadow-sm border border-green-100",
+        red: "bg-red-50 text-red-700 shadow-sm border border-red-100",
+        purple:
+          "bg-purple-50 text-purple-700 shadow-sm border border-purple-100",
       };
-      return colorMap[navItem.color] || 'bg-gray-50 text-gray-700 shadow-sm border border-gray-100';
+      return (
+        colorMap[navItem.color] ||
+        "bg-gray-50 text-gray-700 shadow-sm border border-gray-100"
+      );
     }
-    
-    return 'text-gray-700 hover:text-blue-600 hover:bg-gray-50';
+
+    return "text-gray-700 hover:text-blue-600 hover:bg-gray-50";
   };
 
   return (
-    <nav className={`sticky top-0 z-40 transition-all duration-300 ${
-      scrolled ? 'glass-nav shadow-lg' : 'bg-white/90 backdrop-blur-sm border-b border-gray-200'
-    }`}>
+    <nav
+      className={`sticky top-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "glass-nav shadow-lg"
+          : "bg-white/90 backdrop-blur-sm border-b border-gray-200"
+      }`}
+    >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo with Medical Branding */}
           <Link to="/dashboard" className="flex items-center space-x-3 group">
             <div className="relative">
               {/* Medical pulse animation */}
-              <motion.div 
+              <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl blur-lg opacity-40"
-                animate={{ 
+                animate={{
                   opacity: [0.2, 0.7, 0.2],
-                  scale: [0.9, 1.1, 0.9]
+                  scale: [0.9, 1.1, 0.9],
                 }}
                 transition={{ duration: 2.5, repeat: Infinity }}
               />
@@ -196,7 +211,9 @@ const NavigationBar = () => {
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent">
                 MedGuard <span className="text-gray-900">AI</span>
               </h1>
-              <p className="text-xs text-gray-600 font-medium">Unified Hospital Portal</p>
+              <p className="text-xs text-gray-600 font-medium">
+                Unified Hospital Portal
+              </p>
             </div>
             <div className="hidden sm:block lg:hidden">
               <h1 className="text-lg font-bold text-blue-700">MedGuard AI</h1>
@@ -209,7 +226,7 @@ const NavigationBar = () => {
               const Icon = item.icon;
               const active = isActive(item);
               const linkPath = getLinkPath(item);
-              
+
               return (
                 <Link key={item.path} to={linkPath}>
                   <motion.div
@@ -221,30 +238,37 @@ const NavigationBar = () => {
                     `}
                   >
                     <div className="flex items-center space-x-2">
-                      <Icon className={`w-4 h-4 ${item.highlight ? 'text-white' : ''}`} />
+                      <Icon
+                        className={`w-4 h-4 ${
+                          item.highlight ? "text-white" : ""
+                        }`}
+                      />
                       <span className="whitespace-nowrap">{item.label}</span>
-                      
+
                       {/* Badge for items like patient count */}
                       {item.badge && (
-                        <span className={`
+                        <span
+                          className={`
                           px-2 py-0.5 text-xs font-semibold rounded-full
-                          ${active 
-                            ? item.color === 'green' 
-                              ? 'bg-green-100 text-green-700' 
-                              : 'bg-blue-100 text-blue-700'
-                            : 'bg-gray-100 text-gray-600'
+                          ${
+                            active
+                              ? item.color === "green"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-blue-100 text-blue-700"
+                              : "bg-gray-100 text-gray-600"
                           }
-                        `}>
+                        `}
+                        >
                           {item.badge}
                         </span>
                       )}
-                      
+
                       {/* Highlight animation for primary CTA */}
                       {item.highlight && (
                         <motion.div
-                          animate={{ 
+                          animate={{
                             rotate: [0, 15, -15, 0],
-                            scale: [1, 1.1, 1]
+                            scale: [1, 1.1, 1],
                           }}
                           transition={{ duration: 2, repeat: Infinity }}
                         >
@@ -252,7 +276,7 @@ const NavigationBar = () => {
                         </motion.div>
                       )}
                     </div>
-                    
+
                     {/* Enhanced tooltip on hover */}
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.9 }}
@@ -261,34 +285,38 @@ const NavigationBar = () => {
                     >
                       {item.description}
                       {/* Show sub-features for consolidated items */}
-                      {item.path === '/analyze' && (
+                      {item.path === "/analyze" && (
                         <div className="text-xs text-gray-300 mt-1">
                           Upload • Images • Emergency
                         </div>
                       )}
-                      {item.path === '/insights' && (
+                      {item.path === "/insights" && (
                         <div className="text-xs text-gray-300 mt-1">
                           Reports • Analytics • Research
                         </div>
                       )}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
                     </motion.div>
-                    
+
                     {/* Active indicator */}
                     {active && !item.highlight && (
                       <motion.div
                         layoutId="activeNavTab"
                         className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r ${
-                          item.color === 'green' 
-                            ? 'from-green-500 to-green-600'
-                            : item.color === 'red'
-                            ? 'from-red-500 to-red-600'
-                            : item.color === 'purple'
-                            ? 'from-purple-500 to-purple-600'
-                            : 'from-blue-500 to-blue-600'
+                          item.color === "green"
+                            ? "from-green-500 to-green-600"
+                            : item.color === "red"
+                            ? "from-red-500 to-red-600"
+                            : item.color === "purple"
+                            ? "from-purple-500 to-purple-600"
+                            : "from-blue-500 to-blue-600"
                         }`}
                         initial={false}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 30,
+                        }}
                       />
                     )}
                   </motion.div>
@@ -303,7 +331,7 @@ const NavigationBar = () => {
               const Icon = item.icon;
               const active = isActive(item);
               const linkPath = getLinkPath(item);
-              
+
               return (
                 <Link key={item.path} to={linkPath}>
                   <motion.div
@@ -311,22 +339,24 @@ const NavigationBar = () => {
                     whileTap={{ scale: 0.95 }}
                     className={`
                       relative p-2.5 rounded-lg transition-all duration-200
-                      ${active 
-                        ? item.color === 'green'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-blue-100 text-blue-700'
-                        : 'text-gray-600 hover:text-blue-600 hover:bg-gray-100'
+                      ${
+                        active
+                          ? item.color === "green"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-blue-100 text-blue-700"
+                          : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
                       }
-                      ${item.highlight 
-                        ? 'bg-gradient-to-r from-blue-600 to-green-600 text-white' 
-                        : ''
+                      ${
+                        item.highlight
+                          ? "bg-gradient-to-r from-blue-600 to-green-600 text-white"
+                          : ""
                       }
                     `}
                   >
                     <Icon className="w-5 h-5" />
                     {item.badge && (
                       <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
-                        {item.badge === '247' ? '99+' : item.badge}
+                        {item.badge === "247" ? "99+" : item.badge}
                       </span>
                     )}
                   </motion.div>
@@ -349,13 +379,6 @@ const NavigationBar = () => {
                   <span className="hidden lg:inline">Emergency</span>
                 </motion.button>
               </Link>
-              
-              {/* Settings Quick Access */}
-              <Link to="/settings">
-                <button className="p-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
-                  <Settings className="w-5 h-5" />
-                </button>
-              </Link>
             </div>
 
             {/* Enhanced Notifications */}
@@ -373,7 +396,7 @@ const NavigationBar = () => {
                       animate={{ scale: 1 }}
                       className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md"
                     >
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                      {unreadCount > 9 ? "9+" : unreadCount}
                     </motion.span>
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-400 rounded-full animate-ping" />
                   </>
@@ -398,7 +421,9 @@ const NavigationBar = () => {
                       transition={{ duration: 0.2 }}
                       className="absolute right-0 mt-2 z-50"
                     >
-                      <NotificationPanel onClose={() => setShowNotifications(false)} />
+                      <NotificationPanel
+                        onClose={() => setShowNotifications(false)}
+                      />
                     </motion.div>
                   </>
                 )}
@@ -415,22 +440,34 @@ const NavigationBar = () => {
                   {/* Professional Avatar */}
                   <div className="relative">
                     <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
-                      {currentUser?.avatar || currentUser?.name?.substring(0, 2)?.toUpperCase() || 'DR'}
+                      {currentUser?.avatar ||
+                        currentUser?.name?.substring(0, 2)?.toUpperCase() ||
+                        "DR"}
                     </div>
                     {/* Online status with medical cross */}
                     <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
                       <div className="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
                     </div>
                   </div>
-                  
+
                   {/* Doctor Info - Hidden on small screens */}
                   <div className="hidden lg:block text-left">
-                    <p className="text-sm font-semibold text-gray-800">{currentUser?.name || 'Dr. Sarah Johnson'}</p>
-                    <p className="text-xs text-gray-500">{currentUser?.profession || currentUser?.role || 'Radiologist'}</p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {currentUser?.name || "Dr. Sarah Johnson"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {currentUser?.profession ||
+                        currentUser?.role ||
+                        "Radiologist"}
+                    </p>
                   </div>
                 </div>
-                
-                <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${showProfile ? 'rotate-180' : ''}`} />
+
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${
+                    showProfile ? "rotate-180" : ""
+                  }`}
+                />
               </button>
 
               {/* Profile Dropdown */}
@@ -459,22 +496,24 @@ const NavigationBar = () => {
             const Icon = item.icon;
             const active = isActive(item);
             const linkPath = getLinkPath(item);
-            
+
             return (
               <Link
                 key={item.path}
                 to={linkPath}
                 className={`
                   relative flex flex-col items-center justify-center px-3 py-2.5 rounded-lg transition-all duration-200 min-w-0
-                  ${active 
-                    ? item.color === 'green'
-                      ? 'text-green-600 bg-green-50'
-                      : 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-blue-600'
+                  ${
+                    active
+                      ? item.color === "green"
+                        ? "text-green-600 bg-green-50"
+                        : "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600"
                   }
-                  ${item.highlight 
-                    ? 'bg-gradient-to-t from-blue-600 to-green-600 text-white shadow-md' 
-                    : ''
+                  ${
+                    item.highlight
+                      ? "bg-gradient-to-t from-blue-600 to-green-600 text-white shadow-md"
+                      : ""
                   }
                 `}
               >
@@ -482,17 +521,19 @@ const NavigationBar = () => {
                 <span className="text-xs font-medium text-center leading-tight">
                   {item.label}
                 </span>
-                
+
                 {item.badge && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
                     99+
                   </span>
                 )}
-                
+
                 {active && !item.highlight && (
-                  <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full ${
-                    item.color === 'green' ? 'bg-green-600' : 'bg-blue-600'
-                  }`} />
+                  <div
+                    className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 rounded-full ${
+                      item.color === "green" ? "bg-green-600" : "bg-blue-600"
+                    }`}
+                  />
                 )}
               </Link>
             );
