@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell, Search, User, Settings, LogOut, Shield, 
   Moon, Sun, Globe, HelpCircle, ChevronDown,
@@ -15,6 +16,7 @@ const Header = ({ sidebarCollapsed, onToggleSidebar }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState('light');
+  const navigate = useNavigate();
   
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
@@ -275,7 +277,21 @@ const Header = ({ sidebarCollapsed, onToggleSidebar }) => {
                 <div className="p-4 border-b border-white/10">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-neutral-800">Notifications</h3>
-                    <span className="text-xs text-neutral-500">{unreadCount} unread</span>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xs text-neutral-500">{unreadCount} unread</span>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          navigate('/settings?section=notifications');
+                          setShowNotifications(false);
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                        title="Notification Settings"
+                      >
+                        <Settings className="w-4 h-4 text-neutral-600" />
+                      </motion.button>
+                    </div>
                   </div>
                 </div>
                 
@@ -316,7 +332,13 @@ const Header = ({ sidebarCollapsed, onToggleSidebar }) => {
                 </div>
                 
                 <div className="p-4 border-t border-white/10">
-                  <button className="btn-glass-pro w-full justify-center text-sm">
+                  <button 
+                    onClick={() => {
+                      navigate('/settings?section=notifications');
+                      setShowNotifications(false);
+                    }}
+                    className="btn-glass-pro w-full justify-center text-sm"
+                  >
                     View All Notifications
                   </button>
                 </div>

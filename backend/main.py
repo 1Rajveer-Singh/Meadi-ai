@@ -31,6 +31,7 @@ from routes.patients import patients_router
 from routes.diagnosis import diagnosis_router
 from routes.auth import auth_router
 from routes.websocket_handler import manager
+from routes.notifications import router as notifications_router
 
 from models.schemas import (
     DiagnosisRequest,
@@ -272,6 +273,7 @@ if settings.environment == "production":
 app.include_router(patients_router)
 app.include_router(diagnosis_router)
 app.include_router(auth_router)
+app.include_router(notifications_router)
 
 
 # ==================== WebSocket Endpoints ====================
