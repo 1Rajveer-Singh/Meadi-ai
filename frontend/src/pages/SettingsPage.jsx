@@ -78,8 +78,8 @@ const SettingsPage = () => {
     { id: "notifications", label: "Notifications & Alerts", icon: Bell },
     { id: "security", label: "Security & Authentication", icon: Shield },
     { id: "integrations", label: "Integrations & Connections", icon: LinkIcon },
-    { id: "ai", label: "AI Configuration & Tuning", icon: Brain },
-    { id: "team", label: "Team & Collaboration", icon: Users },
+    { id: "ai", label: "AI Configuration & Tuning", icon: Brain, isLink: true, path: "/settings/ai-configuration" },
+    { id: "team", label: "Team & Collaboration", icon: Users, isLink: true, path: "/settings/team-collaboration" },
     { id: "compliance", label: "Compliance & Audit", icon: Scale },
     { id: "data", label: "Data & Backup", icon: Database },
     { id: "mobile", label: "Mobile & Devices", icon: Smartphone },
@@ -89,7 +89,9 @@ const SettingsPage = () => {
   // Handle URL parameters for direct section navigation
   useEffect(() => {
     const section = searchParams.get("section");
-    if (section && sections.find((s) => s.id === section)) {
+    const sectionConfig = sections.find((s) => s.id === section);
+    // Only set active section if it's not a link (doesn't navigate to a separate page)
+    if (section && sectionConfig && !sectionConfig.isLink) {
       setActiveSection(section);
     }
   }, [searchParams]);
@@ -862,7 +864,13 @@ const SettingsPage = () => {
                 return (
                   <button
                     key={section.id}
-                    onClick={() => setActiveSection(section.id)}
+                    onClick={() => {
+                      if (section.isLink && section.path) {
+                        navigate(section.path);
+                      } else {
+                        setActiveSection(section.id);
+                      }
+                    }}
                     className={`
                       w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                       ${

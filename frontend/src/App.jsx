@@ -10,6 +10,8 @@ import SafetyPage from "@pages/SafetyPage";
 import InsightsPage from "@pages/InsightsPage";
 import ProfilePage from "@pages/ProfilePage";
 import SettingsPage from "@pages/SettingsPage";
+import AIConfigurationPage from "@pages/AIConfigurationPage";
+import TeamCollaborationPage from "@pages/TeamCollaborationPage";
 
 // Providers
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -61,6 +63,8 @@ function App() {
               {/* Profile & Settings */}
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings/ai-configuration" element={<AIConfigurationPage />} />
+              <Route path="/settings/team-collaboration" element={<TeamCollaborationPage />} />
 
               {/* Legacy Routes - Redirect to consolidated pages */}
               <Route path="/new-diagnosis" element={<AnalyzePage />} />
