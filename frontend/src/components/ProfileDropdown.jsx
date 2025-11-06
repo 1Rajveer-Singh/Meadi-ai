@@ -47,6 +47,8 @@ const ProfileDropdown = ({ onClose }) => {
 
   const quickActions = [
     { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: Shield, label: "Safety", path: "/drug-checker" },
+    { icon: TrendingUp, label: "Insights", path: "/analytics" },
   ];
 
   const settingsMenu = [];
@@ -123,14 +125,22 @@ const ProfileDropdown = ({ onClose }) => {
 
       {/* Quick Actions */}
       <div className="px-2 py-3 border-b border-gray-200 dark:border-gray-700">
-        <Link
-          to="/settings"
-          onClick={onClose}
-          className="flex items-center space-x-3 px-4 py-2.5 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors group"
-        >
-          <Settings className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
-          <span className="text-sm font-medium">Settings</span>
-        </Link>
+        <div className="space-y-2">
+          {quickActions.map((action) => {
+            const Icon = action.icon;
+            return (
+              <Link
+                key={action.path}
+                to={action.path}
+                onClick={onClose}
+                className="flex items-center space-x-3 px-4 py-2.5 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors group"
+              >
+                <Icon className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                <span className="text-sm font-medium">{action.label}</span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       {/* Settings Menu - Hidden since empty */}

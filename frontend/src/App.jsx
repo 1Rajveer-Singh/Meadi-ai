@@ -8,6 +8,7 @@ import SimplePatientsPage from "@pages/SimplePatientsPage";
 import AnalyzePage from "@pages/AnalyzePage";
 import SafetyPage from "@pages/SafetyPage";
 import InsightsPage from "@pages/InsightsPage";
+import ReportsPage from "@pages/ReportsPage";
 import ProfilePage from "@pages/ProfilePage";
 import SettingsPage from "@pages/SettingsPage";
 import AIConfigurationPage from "@pages/AIConfigurationPage";
@@ -53,9 +54,11 @@ function App() {
               <Route path="/drug-checker" element={<SafetyPage />} />
               <Route path="/safety/*" element={<SafetyPage />} />
 
-              {/* Consolidated Insights Hub - Analytics + Reports + Research + AI */}
+              {/* Reports Page - Medical Reports & Analysis Results */}
+              <Route path="/reports" element={<ReportsPage />} />
+
+              {/* Consolidated Insights Hub - Analytics + Research + AI */}
               <Route path="/analytics" element={<InsightsPage />} />
-              <Route path="/reports" element={<InsightsPage />} />
               <Route path="/research" element={<InsightsPage />} />
               <Route path="/ai-insights" element={<InsightsPage />} />
               <Route path="/insights/*" element={<InsightsPage />} />
@@ -63,8 +66,14 @@ function App() {
               {/* Profile & Settings */}
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/settings/ai-configuration" element={<AIConfigurationPage />} />
-              <Route path="/settings/team-collaboration" element={<TeamCollaborationPage />} />
+              <Route
+                path="/settings/ai-configuration"
+                element={<AIConfigurationPage />}
+              />
+              <Route
+                path="/settings/team-collaboration"
+                element={<TeamCollaborationPage />}
+              />
 
               {/* Legacy Routes - Redirect to consolidated pages */}
               <Route path="/new-diagnosis" element={<AnalyzePage />} />

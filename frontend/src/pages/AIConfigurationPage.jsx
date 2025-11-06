@@ -25,12 +25,9 @@ import {
   User,
   Bell,
   Shield,
-  Link as LinkIcon,
-  Users,
-  Scale,
   Smartphone,
-  CreditCard,
   LogOut,
+  ChevronRight,
 } from "lucide-react";
 import SimpleLayout from "../components/layouts/SimpleLayout";
 import toast from "react-hot-toast";
@@ -971,90 +968,69 @@ const AIConfigurationPage = () => {
             <nav className="space-y-1">
               <button
                 onClick={() => navigate("/settings?section=profile")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 group"
               >
                 <User className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Personal Profile</span>
-              </button>
-
-              <button
-                onClick={() => navigate("/settings?section=account")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-              >
-                <LogOut className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Account & Sign Out</span>
+                <span className="text-left flex-1">Personal Profile</span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 
               <button
                 onClick={() => navigate("/settings?section=notifications")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 group"
               >
                 <Bell className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Notifications & Alerts</span>
+                <span className="text-left flex-1">Notifications & Alerts</span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 
               <button
                 onClick={() => navigate("/settings?section=security")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 group"
               >
                 <Shield className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Security & Authentication</span>
-              </button>
-
-              <button
-                onClick={() => navigate("/settings?section=integrations")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                <LinkIcon className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Integrations & Connections</span>
+                <span className="text-left flex-1">
+                  Security & Authentication
+                </span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 
               <button
                 onClick={() => setActiveTab("models")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 group"
               >
                 <Brain className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">AI Configuration & Tuning</span>
-              </button>
-
-              <button
-                onClick={() => navigate("/settings?section=team")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                <Users className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Team & Collaboration</span>
-              </button>
-
-              <button
-                onClick={() => navigate("/settings?section=compliance")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                <Scale className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Compliance & Audit</span>
+                <span className="text-left flex-1">
+                  AI Configuration & Tuning
+                </span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 
               <button
                 onClick={() => navigate("/settings?section=data")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 group"
               >
                 <Database className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Data & Backup</span>
+                <span className="text-left flex-1">Data & Backup</span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 
               <button
                 onClick={() => navigate("/settings?section=mobile")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 group"
               >
                 <Smartphone className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Mobile & Devices</span>
+                <span className="text-left flex-1">Mobile & Devices</span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 
               <button
-                onClick={() => navigate("/settings?section=billing")}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                onClick={() => navigate("/settings?section=account")}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-red-700 hover:bg-red-50 border border-red-200 dark:text-red-400 dark:hover:bg-red-900/20 dark:border-red-800 group"
               >
-                <CreditCard className="w-4 h-4 flex-shrink-0" />
-                <span className="text-left">Billing & Subscription</span>
+                <LogOut className="w-4 h-4 flex-shrink-0" />
+                <span className="text-left flex-1">Account & Sign Out</span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
             </nav>
           </div>

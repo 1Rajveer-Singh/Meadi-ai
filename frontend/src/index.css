@@ -7,6 +7,9 @@
 @import './styles/glassmorphism-enhanced.css';
 @import './styles/hospital-theme.css';
 
+/* Google Fonts - Handwriting font for signatures */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -173,6 +176,18 @@
     @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
   }
 
+  /* Medical Report Styling */
+  .font-dancing {
+    font-family: 'Dancing Script', cursive;
+  }
+
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
   /* Medical Heatmap Colors */
   .heatmap-critical {
     @apply bg-gradient-to-br from-alert-400 to-alert-600;
@@ -264,15 +279,168 @@
 
 /* Print Styles for Medical Reports */
 @media print {
-  .no-print {
+  /* Hide non-essential elements */
+  .no-print,
+  nav,
+  button,
+  .print\\:hidden {
     display: none !important;
   }
 
+  /* Reset page styles */
   body {
     @apply bg-white text-black;
+    margin: 0;
+    padding: 0;
   }
 
-  .card {
-    @apply shadow-none border border-gray-300;
+  /* Report container */
+  #medical-report-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    page-break-after: avoid;
+  }
+
+  /* Remove shadows and backgrounds */
+  .card,
+  .shadow-2xl,
+  .shadow-lg,
+  .shadow-md {
+    box-shadow: none !important;
+  }
+
+  /* Adjust colors for print */
+  .dark\\:bg-gray-800,
+  .dark\\:bg-gray-700,
+  .bg-gray-50 {
+    background-color: white !important;
+  }
+
+  .dark\\:text-gray-100,
+  .dark\\:text-gray-200 {
+    color: black !important;
+  }
+
+  /* Preserve gradients and colors */
+  .bg-gradient-to-r,
+  .bg-gradient-to-br {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .page-break-avoid {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure content fits */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Header section */
+  .bg-gradient-to-r.from-blue-600 {
+    background: linear-gradient(to right, #2563eb, #9333ea, #2563eb) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Certification seals */
+  .bg-gradient-to-br {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Badge colors */
+  .bg-blue-200,
+  .bg-green-200,
+  .bg-purple-200,
+  .bg-yellow-50 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Text colors */
+  .text-blue-600,
+  .text-green-600,
+  .text-purple-600,
+  .text-red-600 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Borders */
+  .border-blue-200,
+  .border-green-200,
+  .border-purple-200 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Avoid breaking inside elements */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  ul, ol {
+    page-break-inside: avoid;
+  }
+
+  /* Table styles */
+  table {
+    page-break-inside: avoid;
+  }
+
+  /* Signature section */
+  .font-dancing {
+    font-family: 'Dancing Script', cursive !important;
+  }
+
+  /* Footer - show in print */
+  .print\\:block {
+    display: block !important;
+  }
+
+  /* Adjust spacing for print */
+  .p-8 {
+    padding: 1.5rem !important;
+  }
+
+  .p-6 {
+    padding: 1rem !important;
+  }
+
+  /* Remove animations */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Print mode class for additional control */
+.print-mode {
+  width: 210mm !important;
+  min-height: 297mm !important;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
   }
 }

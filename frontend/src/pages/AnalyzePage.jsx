@@ -22,9 +22,12 @@ import {
   Plus,
   Eye,
   X,
+  Download,
+  FileText,
 } from "lucide-react";
 import NavigationBar from "../components/NavigationBar";
 import MedicalAnalysisAPI from "../api/medicalAnalysisAPI";
+import MedicalReport from "../components/MedicalReport";
 import toast from "react-hot-toast";
 
 // Multi-Agent Analysis Types
@@ -422,51 +425,232 @@ const AnalyzePage = () => {
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
 
-    // Validate file types
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/tiff",
-      "application/pdf",
-      "application/dicom",
-      "application/octet-stream", // for .dcm files
+    // Medical file type definitions
+    const allowedTypes = {
+      // Medical Images
+      "image/jpeg": "JPEG Medical Image",
+      "image/png": "PNG Medical Image",
+      "image/tiff": "TIFF Medical Image",
+      "image/bmp": "BMP Medical Image",
+
+      // DICOM Files
+      "application/dicom": "DICOM Image",
+      "application/octet-stream": "DICOM/Medical Data",
+
+      // Medical Documents
+      "application/pdf": "Medical PDF Document",
+
+      // Lab Results
+      "text/csv": "Lab Results CSV",
+      "application/vnd.ms-excel": "Lab Results Excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        "Lab Results Excel",
+    };
+
+    // Medical file extensions
+    const allowedExtensions = [
+      ".dcm",
+      ".dicom", // DICOM
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".tiff",
+      ".tif",
+      ".bmp", // Images
+      ".pdf", // Documents
+      ".nii",
+      ".nii.gz", // NIfTI neuroimaging
+      ".csv",
+      ".xls",
+      ".xlsx", // Lab results
     ];
 
     const validFiles = files.filter((file) => {
-      const isValidType =
-        allowedTypes.includes(file.type) ||
-        file.name.toLowerCase().endsWith(".dcm") ||
-        file.name.toLowerCase().endsWith(".dicom");
+      const fileName = file.name.toLowerCase();
+      const fileExtension = fileName.substring(fileName.lastIndexOf("."));
 
-      if (!isValidType) {
-        toast.error(`Invalid file type: ${file.name}`);
+      // Check if file extension is allowed
+      const hasValidExtension = allowedExtensions.some((ext) =>
+        fileName.endsWith(ext)
+      );
+
+      // Check if MIME type is allowed
+      const hasValidMimeType = Object.keys(allowedTypes).includes(file.type);
+
+      if (!hasValidExtension && !hasValidMimeType) {
+        toast.error(
+          `❌ Invalid medical file type: ${file.name}\n` +
+            `Only medical images (DICOM, X-ray, MRI, CT), PDFs, and lab results are allowed.`,
+          { duration: 5000 }
+        );
         return false;
       }
 
-      // Check file size (max 50MB)
-      if (file.size > 50 * 1024 * 1024) {
-        toast.error(`File too large: ${file.name} (max 50MB)`);
+      // Check file size (max 100MB for medical images)
+      const maxSize = 100 * 1024 * 1024;
+      if (file.size > maxSize) {
+        toast.error(
+          `❌ File too large: ${file.name}\n` +
+            `Maximum size: 100MB. Current: ${(file.size / 1024 / 1024).toFixed(
+              2
+            )}MB`,
+          { duration: 5000 }
+        );
+        return false;
+      }
+
+      // Minimum file size check (avoid empty files)
+      if (file.size < 1024) {
+        toast.error(`❌ File too small: ${file.name} (may be corrupted)`);
         return false;
       }
 
       return true;
     });
 
-    const newFiles = validFiles.map((file) => ({
-      id: Date.now() + Math.random(),
-      file,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      status: "pending",
-    }));
+    if (validFiles.length === 0) {
+      toast.error(
+        "No valid medical files selected. Please upload DICOM, X-ray, MRI, CT scans, or medical PDFs."
+      );
+      return;
+    }
+
+    const newFiles = validFiles.map((file) => {
+      const fileName = file.name.toLowerCase();
+      let fileCategory = "Unknown";
+
+      // Categorize file
+      if (fileName.endsWith(".dcm") || fileName.endsWith(".dicom")) {
+        fileCategory = "DICOM Image";
+      } else if (fileName.match(/\.(jpg|jpeg|png|tiff|tif|bmp)$/)) {
+        fileCategory = "Medical Image";
+      } else if (fileName.endsWith(".pdf")) {
+        fileCategory = "Medical Document";
+      } else if (fileName.match(/\.(nii|nii\.gz)$/)) {
+        fileCategory = "Neuroimaging";
+      } else if (fileName.match(/\.(csv|xls|xlsx)$/)) {
+        fileCategory = "Lab Results";
+      }
+
+      return {
+        id: Date.now() + Math.random(),
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        category: fileCategory,
+        status: "pending",
+        uploadedAt: new Date().toISOString(),
+      };
+    });
 
     setUploadedFiles((prev) => [...prev, ...newFiles]);
-    toast.success(`${newFiles.length} valid file(s) added for analysis`);
+    toast.success(
+      `✅ ${newFiles.length} medical file(s) added for analysis\n` +
+        `Types: ${[...new Set(newFiles.map((f) => f.category))].join(", ")}`,
+      { duration: 4000 }
+    );
   };
 
   const removeFile = (fileId) => {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
+  };
+
+  // Load mock data for testing
+  const loadMockData = () => {
+    // Mock patient data
+    setPatientId("PT-2024-DEMO-001");
+    setPatientInfo({
+      age: "45",
+      gender: "male",
+      symptoms:
+        "Persistent chest pain, shortness of breath, and fatigue for the past 2 weeks",
+      medicalHistory: `Conditions: Type 2 Diabetes (diagnosed 2018), Hypertension (diagnosed 2020)
+
+Current Medications:
+- Metformin 1000mg twice daily
+- Lisinopril 10mg once daily
+- Aspirin 81mg once daily
+
+Allergies: Penicillin (rash)
+
+Family History: Father had myocardial infarction at age 52, Mother has hypertension
+
+Recent Labs:
+- HbA1c: 7.2%
+- Total Cholesterol: 220 mg/dL
+- LDL: 145 mg/dL
+- Blood Pressure: 145/92 mmHg`,
+    });
+
+    // Mock file upload
+    const mockFile = {
+      id: Date.now(),
+      name: "chest_xray_pa_view.dcm",
+      size: 2.5 * 1024 * 1024, // 2.5 MB
+      type: "application/dicom",
+      category: "DICOM Image",
+      status: "pending",
+      uploadedAt: new Date().toISOString(),
+      file: new File([], "chest_xray_pa_view.dcm", {
+        type: "application/dicom",
+      }),
+    };
+
+    setUploadedFiles([mockFile]);
+
+    toast.success(
+      "✅ Mock patient data loaded!\n" +
+        "Patient: 45-year-old male with cardiovascular symptoms\n" +
+        "Medical history and chest X-ray added",
+      { duration: 5000, icon: "🧪" }
+    );
+  };
+
+  // Generate mock analysis results for testing
+  const generateMockResults = () => {
+    const mockResults = {
+      analysisType: "Multi-Agent Comprehensive Analysis",
+      confidence: 92,
+      riskScore: "Moderate",
+      priority: "High",
+      findings: [
+        "Cardiac silhouette appears mildly enlarged with cardiothoracic ratio of 0.52",
+        "Possible early signs of pulmonary vascular congestion in lower lung fields",
+        "No acute infiltrates or consolidation identified",
+        "Costophrenic angles are sharp bilaterally",
+        "No pneumothorax or pleural effusion detected",
+        "AI-powered analysis suggests further cardiac evaluation recommended",
+      ],
+      recommendations: [
+        "Immediate cardiology referral for comprehensive cardiac workup",
+        "Consider echocardiogram to assess cardiac function and ejection fraction",
+        "ECG and cardiac biomarkers (troponin, BNP) recommended within 24 hours",
+        "Blood pressure optimization - current readings above target for diabetic patient",
+        "Lipid panel review and consider statin therapy initiation",
+        "Continue current diabetes and hypertension management",
+        "Lifestyle modifications: cardiac rehabilitation, dietary sodium restriction",
+      ],
+      workflowId: `ANALYSIS-${Date.now()}`,
+      completedAt: new Date().toISOString(),
+      rawResults: {
+        agent_results: {
+          imaging_analysis: "Completed with 94% confidence",
+          drug_safety: "2 potential drug-condition interactions identified",
+          clinical_decision: "High priority cardiac evaluation recommended",
+          risk_assessment: "Moderate cardiovascular risk profile",
+        },
+      },
+    };
+
+    setAnalysisResults(mockResults);
+    setActiveTab("results");
+
+    toast.success(
+      "🎉 Mock analysis completed!\n" +
+        "Professional medical report generated with AI findings",
+      { duration: 4000, icon: "📊" }
+    );
   };
 
   // Check multi-agent system status
@@ -551,8 +735,48 @@ const AnalyzePage = () => {
   }, []);
 
   const startAnalysis = async () => {
+    // Validate patient ID
     if (!patientId.trim()) {
-      toast.error("Please enter a patient ID");
+      toast.error("⚠️ Patient ID is required to start analysis");
+      setActiveTab("patient");
+      return;
+    }
+
+    // Validate patient info
+    const validationErrors = [];
+
+    if (!patientInfo.age || patientInfo.age < 0 || patientInfo.age > 150) {
+      validationErrors.push("Valid age is required (0-150 years)");
+    }
+
+    if (!patientInfo.gender) {
+      validationErrors.push("Gender is required");
+    }
+
+    if (!patientInfo.symptoms || patientInfo.symptoms.trim().length < 5) {
+      validationErrors.push(
+        "Symptoms description is required (minimum 5 characters)"
+      );
+    }
+
+    if (validationErrors.length > 0) {
+      toast.error(
+        `❌ Please complete patient information:\n${validationErrors.join(
+          "\n"
+        )}`,
+        { duration: 6000 }
+      );
+      setActiveTab("patient");
+      return;
+    }
+
+    // Validate files for certain analysis types
+    if (
+      ["imaging", "comprehensive"].includes(selectedAnalysisType) &&
+      uploadedFiles.length === 0
+    ) {
+      toast.error("⚠️ Please upload medical images for imaging analysis");
+      setActiveTab("upload");
       return;
     }
 
@@ -561,7 +785,7 @@ const AnalyzePage = () => {
     setActiveTab("analysis");
 
     try {
-      toast.loading("Initializing multi-agent analysis...", { id: "init" });
+      toast.loading("🧠 Initializing AI analysis...", { id: "init" });
 
       // Prepare comprehensive analysis request for multi-agent system
       const analysisRequest = {
@@ -586,7 +810,7 @@ const AnalyzePage = () => {
         },
       };
 
-      toast.success("Analysis request prepared", { id: "init" });
+      toast.success("✅ Analysis request prepared", { id: "init" });
       setAnalysisProgress(20);
 
       // Execute appropriate analysis based on selected type
@@ -594,7 +818,7 @@ const AnalyzePage = () => {
 
       switch (selectedAnalysisType) {
         case "comprehensive":
-          toast.loading("Running comprehensive multi-agent analysis...", {
+          toast.loading("🤖 Running comprehensive multi-agent analysis...", {
             id: "analysis",
           });
           analysisResponse = await medicalAnalysisAPI.comprehensiveAnalysis(
@@ -603,7 +827,7 @@ const AnalyzePage = () => {
           break;
 
         case "imaging":
-          toast.loading("Analyzing medical images with MONAI...", {
+          toast.loading("🔬 Analyzing medical images with MONAI...", {
             id: "analysis",
           });
           const imageFiles = uploadedFiles.map((f) => f.file);
@@ -614,7 +838,7 @@ const AnalyzePage = () => {
           break;
 
         case "drug_safety":
-          toast.loading("Checking drug interactions...", { id: "analysis" });
+          toast.loading("💊 Checking drug interactions...", { id: "analysis" });
           const drugRequest = medicalAnalysisAPI.formatDrugSafetyRequest(
             analysisRequest.medications,
             analysisRequest.medical_history
@@ -625,7 +849,7 @@ const AnalyzePage = () => {
           break;
 
         case "clinical":
-          toast.loading("Generating clinical recommendations...", {
+          toast.loading("🩺 Generating clinical recommendations...", {
             id: "analysis",
           });
           analysisResponse = await medicalAnalysisAPI.clinicalDecisionSupport(
@@ -634,7 +858,7 @@ const AnalyzePage = () => {
           break;
 
         case "research":
-          toast.loading("Matching clinical trials and research...", {
+          toast.loading("🔍 Matching clinical trials and research...", {
             id: "analysis",
           });
           analysisResponse = await medicalAnalysisAPI.researchAnalysis(
@@ -647,7 +871,7 @@ const AnalyzePage = () => {
       }
 
       setAnalysisProgress(80);
-      toast.success("Analysis completed successfully", { id: "analysis" });
+      toast.success("✅ Analysis completed successfully", { id: "analysis" });
 
       // Process and format results
       const formattedResults = formatAnalysisResults(
@@ -669,21 +893,11 @@ const AnalyzePage = () => {
           icon: "🤖",
         }
       );
-      setAnalysisProgress(60);
-
-      // Poll for results
-      const workflowId = workflowResponse.workflow_id || workflowResponse.id;
-      const results = await pollWorkflowResults(workflowId);
-
-      setAnalysisProgress(100);
-      setAnalysisResults(results);
-      setActiveTab("results");
-
-      toast.success("🎉 Analysis completed successfully!");
     } catch (error) {
       console.error("Analysis error:", error);
-      toast.error(`Analysis failed: ${error.message}`);
+      toast.error(`❌ Analysis failed: ${error.message}`, { duration: 6000 });
       setAnalysisResults(null);
+      setActiveTab("upload");
     } finally {
       setIsAnalyzing(false);
     }
@@ -799,59 +1013,126 @@ const AnalyzePage = () => {
       case "upload":
         return (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
-              Upload Medical Files
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                📁 Upload Medical Files
+              </h3>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Accepted: DICOM, X-ray, MRI, CT, PDF, Lab Results
+              </div>
+            </div>
 
             {/* File Upload Area */}
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors duration-300">
-              <Upload className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4 transition-colors duration-300" />
-              <p className="text-gray-600 dark:text-gray-300 mb-4 transition-colors duration-300">
-                Drop files here or click to upload
+            <div className="border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-lg p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 bg-blue-50/30 dark:bg-blue-900/10">
+              <Upload className="w-12 h-12 text-blue-500 dark:text-blue-400 mx-auto mb-4 transition-colors duration-300" />
+              <p className="text-gray-700 dark:text-gray-200 font-medium mb-2 transition-colors duration-300">
+                Drop medical files here or click to upload
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                DICOM images (.dcm), Medical scans (JPEG, PNG, TIFF), PDFs, Lab
+                results (CSV, Excel)
               </p>
               <input
                 type="file"
                 multiple
-                accept=".jpg,.jpeg,.png,.pdf,.dcm"
+                accept=".jpg,.jpeg,.png,.tiff,.tif,.pdf,.dcm,.dicom,.nii,.nii.gz,.csv,.xls,.xlsx"
                 onChange={handleFileUpload}
                 className="hidden"
                 id="file-upload"
               />
               <label
                 htmlFor="file-upload"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg cursor-pointer transition-colors duration-300"
+                className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg cursor-pointer transition-colors duration-300 shadow-md hover:shadow-lg"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Choose Files
+                <Plus className="w-5 h-5 mr-2" />
+                Choose Medical Files
               </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                Maximum file size: 100MB per file
+              </p>
+            </div>
+
+            {/* Accepted File Types Guide */}
+            <div className="mt-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                ✅ Accepted Medical File Types:
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    <strong>DICOM:</strong> .dcm, .dicom
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    <strong>Images:</strong> .jpg, .png, .tiff
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    <strong>Documents:</strong> .pdf
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    <strong>Neuroimaging:</strong> .nii, .nii.gz
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    <strong>Lab Results:</strong> .csv, .xls
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Uploaded Files List */}
             {uploadedFiles.length > 0 && (
               <div className="mt-6">
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-300">
-                  Uploaded Files ({uploadedFiles.length})
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center justify-between transition-colors duration-300">
+                  <span>📋 Uploaded Files ({uploadedFiles.length})</span>
+                  <button
+                    onClick={() => setUploadedFiles([])}
+                    className="text-xs text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                  >
+                    Clear All
+                  </button>
                 </h4>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {uploadedFiles.map((file) => (
                     <div
                       key={file.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/60 rounded-lg transition-colors duration-300"
+                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-700/60 dark:to-blue-900/20 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors duration-300 hover:shadow-md"
                     >
-                      <div className="flex items-center space-x-3">
-                        <ImageIcon className="w-5 h-5 text-gray-400 dark:text-gray-300 transition-colors duration-300" />
-                        <div>
+                      <div className="flex items-center space-x-3 flex-1">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                          <ImageIcon className="w-5 h-5 text-blue-600 dark:text-blue-300 transition-colors duration-300" />
+                        </div>
+                        <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors duration-300">
                             {file.name}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                            {(file.size / 1024 / 1024).toFixed(2)} MB
-                          </p>
+                          <div className="flex items-center space-x-3 mt-1">
+                            <span className="text-xs px-2 py-0.5 bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded-full font-medium">
+                              {file.category}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">
+                              {(file.size / 1024 / 1024).toFixed(2)} MB
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                              {new Date(file.uploadedAt).toLocaleTimeString()}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <button
                         onClick={() => removeFile(file.id)}
-                        className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-300"
+                        className="ml-3 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 rounded-lg transition-colors duration-300"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -867,26 +1148,36 @@ const AnalyzePage = () => {
         return (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
-              Patient Information
+              👤 Patient Information
             </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Please provide complete patient information for accurate AI
+              analysis
+            </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                  Patient ID
+                  Patient ID <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={patientId}
                   onChange={(e) => setPatientId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                  placeholder="Enter patient ID"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                  placeholder="e.g., PT-2024-001"
+                  required
                 />
+                {!patientId && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Patient ID is required
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                  Age
+                  Age <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -894,14 +1185,23 @@ const AnalyzePage = () => {
                   onChange={(e) =>
                     setPatientInfo((prev) => ({ ...prev, age: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                  placeholder="Age"
+                  min="0"
+                  max="150"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                  placeholder="Enter age in years"
+                  required
                 />
+                {patientInfo.age &&
+                  (patientInfo.age < 0 || patientInfo.age > 150) && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Age must be between 0 and 150
+                    </p>
+                  )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                  Gender
+                  Gender <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={patientInfo.gender}
@@ -911,18 +1211,25 @@ const AnalyzePage = () => {
                       gender: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                  required
                 >
-                  <option value="">Select...</option>
+                  <option value="">Select gender...</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
+                  <option value="prefer_not_to_say">Prefer not to say</option>
                 </select>
+                {!patientInfo.gender && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Gender is required
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                  Symptoms
+                  Presenting Symptoms <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -933,15 +1240,21 @@ const AnalyzePage = () => {
                       symptoms: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                  placeholder="Current symptoms"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                  placeholder="e.g., Chest pain, shortness of breath"
+                  required
                 />
+                {patientInfo.symptoms && patientInfo.symptoms.length < 5 && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please provide more detail (min 5 characters)
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                Medical History
+                Medical History & Current Medications
               </label>
               <textarea
                 value={patientInfo.medicalHistory}
@@ -951,10 +1264,89 @@ const AnalyzePage = () => {
                     medicalHistory: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                rows="3"
-                placeholder="Previous medical history, medications, etc."
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                rows="4"
+                placeholder="Previous diagnoses, surgeries, chronic conditions, current medications with dosages, allergies, family history..."
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Include any relevant medical history, medications, allergies,
+                and family history
+              </p>
+            </div>
+
+            {/* Validation Summary */}
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">
+                ✓ Required Information Checklist
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center space-x-2">
+                  {patientId ? (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <X className="w-4 h-4 text-red-500" />
+                  )}
+                  <span
+                    className={
+                      patientId
+                        ? "text-green-700 dark:text-green-300"
+                        : "text-red-700 dark:text-red-300"
+                    }
+                  >
+                    Patient ID
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {patientInfo.age &&
+                  patientInfo.age > 0 &&
+                  patientInfo.age <= 150 ? (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <X className="w-4 h-4 text-red-500" />
+                  )}
+                  <span
+                    className={
+                      patientInfo.age && patientInfo.age > 0
+                        ? "text-green-700 dark:text-green-300"
+                        : "text-red-700 dark:text-red-300"
+                    }
+                  >
+                    Valid Age
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {patientInfo.gender ? (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <X className="w-4 h-4 text-red-500" />
+                  )}
+                  <span
+                    className={
+                      patientInfo.gender
+                        ? "text-green-700 dark:text-green-300"
+                        : "text-red-700 dark:text-red-300"
+                    }
+                  >
+                    Gender
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {patientInfo.symptoms && patientInfo.symptoms.length >= 5 ? (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <X className="w-4 h-4 text-red-500" />
+                  )}
+                  <span
+                    className={
+                      patientInfo.symptoms && patientInfo.symptoms.length >= 5
+                        ? "text-green-700 dark:text-green-300"
+                        : "text-red-700 dark:text-red-300"
+                    }
+                  >
+                    Symptoms Description
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -963,47 +1355,83 @@ const AnalyzePage = () => {
         return (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
-              AI Analysis
+              🧠 AI Analysis Engine
             </h3>
 
             {!isAnalyzing && !analysisResults && (
               <div className="text-center py-8">
                 <Brain className="w-16 h-16 text-blue-500 dark:text-blue-400 mx-auto mb-4 transition-colors duration-300" />
-                <p className="text-gray-600 dark:text-gray-300 mb-4 transition-colors duration-300">
-                  Ready to start AI analysis
+                <p className="text-gray-600 dark:text-gray-300 mb-6 transition-colors duration-300">
+                  Ready to start comprehensive AI-powered medical analysis
                 </p>
-                <button
-                  onClick={startAnalysis}
-                  disabled={uploadedFiles.length === 0}
-                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  Start Analysis
-                </button>
+                <div className="flex flex-col items-center space-y-3">
+                  <button
+                    onClick={startAnalysis}
+                    disabled={
+                      uploadedFiles.length === 0 && !patientInfo.symptoms
+                    }
+                    className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <Play className="w-5 h-5 mr-2" />
+                    Start Analysis
+                  </button>
+
+                  {/* Quick Test Button */}
+                  <button
+                    onClick={generateMockResults}
+                    className="inline-flex items-center px-6 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white rounded-lg transition-colors duration-300 text-sm"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Generate Mock Report (For Testing)
+                  </button>
+
+                  {uploadedFiles.length === 0 && !patientInfo.symptoms && (
+                    <p className="text-sm text-amber-600 dark:text-amber-400 mt-2">
+                      ⚠️ Please upload files or fill patient information first
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
             {isAnalyzing && (
               <div className="text-center py-8">
-                <div className="animate-spin w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 transition-colors duration-300">
-                  Analyzing medical data...
-                </p>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4 transition-colors duration-300">
-                  <div
-                    className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${analysisProgress}%` }}
-                  />
+                <div className="relative mx-auto mb-6 w-16 h-16">
+                  <div className="absolute inset-0 border-4 border-blue-200 dark:border-blue-800 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                  {analysisProgress}% complete
+                <p className="text-gray-600 dark:text-gray-300 mb-6 font-medium transition-colors duration-300">
+                  🤖 AI agents analyzing medical data...
                 </p>
+                <div className="max-w-md mx-auto">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2 transition-colors duration-300 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 h-3 rounded-full transition-all duration-500 relative"
+                      style={{ width: `${analysisProgress}%` }}
+                    >
+                      <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    <span>{analysisProgress}% complete</span>
+                    <span>
+                      {analysisProgress < 30 && "Initializing..."}
+                      {analysisProgress >= 30 &&
+                        analysisProgress < 70 &&
+                        "Processing images..."}
+                      {analysisProgress >= 70 &&
+                        analysisProgress < 90 &&
+                        "Analyzing data..."}
+                      {analysisProgress >= 90 && "Generating report..."}
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={cancelAnalysis}
                   className="mt-4 inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-lg transition-colors duration-300"
                 >
                   <Pause className="w-4 h-4 mr-2" />
-                  Cancel
+                  Cancel Analysis
                 </button>
               </div>
             )}
@@ -1012,159 +1440,68 @@ const AnalyzePage = () => {
 
       case "results":
         return (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
-              Analysis Results
-            </h3>
-
+          <div className="space-y-6">
             {analysisResults ? (
-              <div className="space-y-6">
-                {/* Analysis Summary */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-700/60 transition-colors duration-300">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      Analysis Complete
-                    </h4>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                      {analysisResults.completedAt
-                        ? new Date(analysisResults.completedAt).toLocaleString()
-                        : "Just now"}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
-                    <span className="font-medium text-gray-700 dark:text-gray-200 transition-colors duration-300">
-                      Workflow ID:
-                    </span>{" "}
-                    {analysisResults.workflowId || "N/A"} |
-                    <span className="font-medium text-gray-700 dark:text-gray-200 transition-colors duration-300">
-                      {" "}
-                      Type:
-                    </span>{" "}
-                    {analysisResults.analysisType || selectedAnalysisType}
-                  </div>
-                </div>
-
-                {/* Key Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800/50 transition-colors duration-300">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-green-900 dark:text-green-300 transition-colors duration-300">
-                        Confidence Score
-                      </h4>
-                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-300 transition-colors duration-300" />
-                    </div>
-                    <p className="text-2xl font-bold text-green-600 dark:text-green-300 transition-colors duration-300">
-                      {analysisResults.confidence}%
-                    </p>
-                    <p className="text-xs text-green-700 dark:text-green-300/80 mt-1 transition-colors duration-300">
-                      AI Analysis Confidence
-                    </p>
-                  </div>
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800/50 transition-colors duration-300">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-blue-900 dark:text-blue-200 transition-colors duration-300">
-                        Risk Level
-                      </h4>
-                      <Shield className="w-5 h-5 text-blue-600 dark:text-blue-300 transition-colors duration-300" />
-                    </div>
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-300 transition-colors duration-300">
-                      {analysisResults.riskScore}
-                    </p>
-                    <p className="text-xs text-blue-700 dark:text-blue-300/80 mt-1 transition-colors duration-300">
-                      Clinical Risk Assessment
-                    </p>
-                  </div>
-                  <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800/50 transition-colors duration-300">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-purple-900 dark:text-purple-200 transition-colors duration-300">
-                        Priority
-                      </h4>
-                      <Clock className="w-5 h-5 text-purple-600 dark:text-purple-300 transition-colors duration-300" />
-                    </div>
-                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-300 transition-colors duration-300">
-                      {analysisResults.priority}
-                    </p>
-                    <p className="text-xs text-purple-700 dark:text-purple-300/80 mt-1 transition-colors duration-300">
-                      Clinical Priority Level
-                    </p>
+              <>
+                {/* Quick Actions Bar */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+                    <FileText className="w-6 h-6 mr-2 text-blue-600" />
+                    Medical Analysis Report
+                  </h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => window.print()}
+                      className="flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export PDF
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAnalysisResults(null);
+                        setActiveTab("upload");
+                        setUploadedFiles([]);
+                        setPatientInfo({
+                          age: "",
+                          gender: "",
+                          symptoms: "",
+                          medicalHistory: "",
+                        });
+                        setPatientId("");
+                      }}
+                      className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      New Analysis
+                    </button>
                   </div>
                 </div>
 
-                {/* Key Findings */}
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-colors duration-300">
-                  <div className="flex items-center mb-3">
-                    <Microscope className="w-5 h-5 text-gray-600 dark:text-gray-300 mr-2 transition-colors duration-300" />
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      Key Findings
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {analysisResults.findings.map((finding, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start space-x-3 p-2 bg-gray-50 dark:bg-gray-700/50 rounded transition-colors duration-300"
-                      >
-                        <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-300 mt-0.5 flex-shrink-0 transition-colors duration-300" />
-                        <span className="text-gray-700 dark:text-gray-300 text-sm transition-colors duration-300">
-                          {finding}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Clinical Recommendations */}
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-colors duration-300">
-                  <div className="flex items-center mb-3">
-                    <Stethoscope className="w-5 h-5 text-gray-600 dark:text-gray-300 mr-2 transition-colors duration-300" />
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      Clinical Recommendations
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {analysisResults.recommendations.map((rec, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start space-x-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded transition-colors duration-300"
-                      >
-                        <Target className="w-4 h-4 text-blue-500 dark:text-blue-300 mt-0.5 flex-shrink-0 transition-colors duration-300" />
-                        <span className="text-gray-700 dark:text-gray-300 text-sm transition-colors duration-300">
-                          {rec}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Raw Results (for debugging/advanced users) */}
-                {analysisResults.rawResults && (
-                  <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-colors duration-300">
-                    <details>
-                      <summary className="cursor-pointer font-medium text-gray-900 dark:text-gray-100 mb-2 transition-colors duration-300">
-                        📊 Detailed Analysis Data (Click to expand)
-                      </summary>
-                      <pre className="bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 text-xs overflow-auto max-h-64 text-gray-800 dark:text-gray-100 transition-colors duration-300">
-                        {JSON.stringify(analysisResults.rawResults, null, 2)}
-                      </pre>
-                    </details>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
-                  <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors duration-300">
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Full Report
-                  </button>
-                  <button className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white rounded-lg transition-colors duration-300">
-                    <Plus className="w-4 h-4 mr-2" />
-                    New Analysis
-                  </button>
-                </div>
-              </div>
+                {/* Professional Medical Report */}
+                <MedicalReport
+                  analysisResults={analysisResults}
+                  patientInfo={patientInfo}
+                  patientId={patientId}
+                />
+              </>
             ) : (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                No results available. Please run an analysis first.
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <Activity className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  No Analysis Results
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  Complete the previous steps and run an analysis to view
+                  results
+                </p>
+                <button
+                  onClick={() => setActiveTab("upload")}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  <Upload className="w-5 h-5 mr-2" />
+                  Start Analysis
+                </button>
               </div>
             )}
           </div>
@@ -1206,14 +1543,23 @@ const AnalyzePage = () => {
                   🤖 Multi-Agent AI System: Active
                 </span>
               </div>
-              <button
-                onClick={runDemoAnalysis}
-                disabled={isAnalyzing}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 flex items-center space-x-2 transition-colors duration-300"
-              >
-                <Brain className="w-4 h-4" />
-                <span>Run Demo Analysis</span>
-              </button>
+              <div className="flex space-x-2">
+                <button
+                  onClick={loadMockData}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white rounded-lg flex items-center space-x-2 transition-colors duration-300"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Load Mock Data</span>
+                </button>
+                <button
+                  onClick={runDemoAnalysis}
+                  disabled={isAnalyzing}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 flex items-center space-x-2 transition-colors duration-300"
+                >
+                  <Brain className="w-4 h-4" />
+                  <span>Run Demo Analysis</span>
+                </button>
+              </div>
             </div>
             <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
               {Object.keys(agentsStatus.agents).length} AI agents ready •

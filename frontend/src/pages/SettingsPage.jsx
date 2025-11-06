@@ -6,17 +6,10 @@ import {
   Bell,
   Palette,
   Shield,
-  Link as LinkIcon,
-  Stethoscope,
   Brain,
-  Users,
   FileText,
-  Scale,
   Database,
-  Globe,
   Smartphone,
-  GraduationCap,
-  CreditCard,
   ChevronRight,
   Save,
   RotateCcw,
@@ -69,15 +62,8 @@ const SettingsPage = () => {
 
   const sections = [
     { id: "profile", label: "Personal Profile", icon: User },
-    {
-      id: "account",
-      label: "Account & Sign Out",
-      icon: LogOut,
-      highlight: true,
-    },
     { id: "notifications", label: "Notifications & Alerts", icon: Bell },
     { id: "security", label: "Security & Authentication", icon: Shield },
-    { id: "integrations", label: "Integrations & Connections", icon: LinkIcon },
     {
       id: "ai",
       label: "AI Configuration & Tuning",
@@ -85,17 +71,14 @@ const SettingsPage = () => {
       isLink: true,
       path: "/settings/ai-configuration",
     },
-    {
-      id: "team",
-      label: "Team & Collaboration",
-      icon: Users,
-      isLink: true,
-      path: "/settings/team-collaboration",
-    },
-    { id: "compliance", label: "Compliance & Audit", icon: Scale },
     { id: "data", label: "Data & Backup", icon: Database },
     { id: "mobile", label: "Mobile & Devices", icon: Smartphone },
-    { id: "billing", label: "Billing & Subscription", icon: CreditCard },
+    {
+      id: "account",
+      label: "Account & Sign Out",
+      icon: LogOut,
+      highlight: true,
+    },
   ];
 
   // Handle URL parameters for direct section navigation
@@ -1591,16 +1574,10 @@ const SettingsPage = () => {
               renderNotificationsSection()
             ) : activeSection === "security" ? (
               renderSecuritySection()
-            ) : activeSection === "integrations" ? (
-              renderIntegrationsSection()
-            ) : activeSection === "compliance" ? (
-              renderComplianceSection()
             ) : activeSection === "data" ? (
               renderDataBackupSection()
             ) : activeSection === "mobile" ? (
               renderMobileDevicesSection()
-            ) : activeSection === "billing" ? (
-              renderBillingSection()
             ) : (
               <>
                 <div className="space-y-6">

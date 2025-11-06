@@ -23,6 +23,7 @@ import {
   Heart,
   Brain,
   Microscope,
+  FileText,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import NotificationPanel from "./NotificationPanel";
@@ -30,6 +31,7 @@ import ProfileDropdown from "./ProfileDropdown";
 import DarkModeToggle from "./DarkModeToggle";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useAuth } from "@/contexts/AuthContext";
+import logo from "@/assets/medi ai logo full vertical.png";
 
 const NavigationBar = () => {
   const location = useLocation();
@@ -112,20 +114,11 @@ const NavigationBar = () => {
       ],
     },
     {
-      path: "/safety",
-      label: "Safety",
-      icon: Shield,
-      description: "Safety & Guidelines",
-      color: "red",
-      subPaths: ["/drug-checker"],
-    },
-    {
-      path: "/insights",
-      label: "Insights",
-      icon: TrendingUp,
-      description: "Analytics & Research",
+      path: "/reports",
+      label: "Reports",
+      icon: FileText,
+      description: "Medical Reports & Documents",
       color: "purple",
-      subPaths: ["/analytics", "/ai-insights", "/research"],
     },
   ];
 
@@ -145,14 +138,6 @@ const NavigationBar = () => {
     // For analyze, route to the primary action
     if (navItem.path === "/analyze") {
       return "/diagnosis/new";
-    }
-    // For safety, route to drug checker
-    if (navItem.path === "/safety") {
-      return "/drug-checker";
-    }
-    // For insights, route to analytics
-    if (navItem.path === "/insights") {
-      return "/analytics";
     }
     return navItem.path;
   };
@@ -190,37 +175,26 @@ const NavigationBar = () => {
     >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo with Medical Branding */}
+          {/* Logo */}
           <Link to="/dashboard" className="flex items-center space-x-3 group">
-            <div className="relative">
-              {/* Medical pulse animation */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl blur-lg opacity-40"
-                animate={{
-                  opacity: [0.2, 0.7, 0.2],
-                  scale: [0.9, 1.1, 0.9],
-                }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-              />
-              <div className="relative w-11 h-11 bg-gradient-to-br from-blue-600 via-blue-700 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-300 shadow-lg">
-                <div className="flex items-center">
-                  <Heart className="w-4 h-4 text-white mr-0.5" />
-                  <Brain className="w-4 h-4 text-white" />
-                </div>
-              </div>
-            </div>
+            <motion.img
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              src={logo}
+              alt="MedAI Logo"
+              className="h-12 w-auto object-contain group-hover:opacity-90 transition-opacity duration-200"
+            />
             <div className="hidden lg:block">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent">
-                MedGuard{" "}
-                <span className="text-gray-900 dark:text-gray-100">AI</span>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                MediAI
               </h1>
               <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                 Unified Hospital Portal
               </p>
             </div>
             <div className="hidden sm:block lg:hidden">
-              <h1 className="text-lg font-bold text-blue-700 dark:text-blue-400">
-                MedGuard AI
+              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                MediAI
               </h1>
             </div>
           </Link>
@@ -293,11 +267,6 @@ const NavigationBar = () => {
                       {item.path === "/analyze" && (
                         <div className="text-xs text-gray-300 mt-1">
                           Upload • Images • Emergency
-                        </div>
-                      )}
-                      {item.path === "/insights" && (
-                        <div className="text-xs text-gray-300 mt-1">
-                          Reports • Analytics • Research
                         </div>
                       )}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
@@ -374,20 +343,6 @@ const NavigationBar = () => {
           <div className="flex items-center space-x-3">
             {/* Dark Mode Toggle */}
             <DarkModeToggle />
-
-            {/* Quick Emergency Access */}
-            <div className="hidden md:flex items-center space-x-2">
-              <Link to="/diagnosis/new?priority=emergency">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center space-x-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md transition-all duration-200 font-medium text-sm"
-                >
-                  <AlertCircle className="w-4 h-4" />
-                  <span className="hidden lg:inline">Emergency</span>
-                </motion.button>
-              </Link>
-            </div>
 
             {/* Enhanced Notifications */}
             <div className="relative" ref={notificationRef}>
